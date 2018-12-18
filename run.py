@@ -1,7 +1,7 @@
 from charm_header import *
 
 def getRunCommand(charmrunbase, execu, run_proc, args):
-  runcommand = charmrunbase + space + "+p"+str(run_proc) + space + execu + space + args
+  runcommand = charmrunbase + space + "+p"+str(run_proc) + space + execu + space + args + space + extraRun
   return runcommand
 
 outputdir = outputbase + expname + "/"
