@@ -13,7 +13,6 @@ megalistDup=[]
 p = re.compile("(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(\d+\.\d+)\s+(\d+\.\d+)")
 def parseFromOutputFile(filename, boolean):
   if os.path.exists(filename):
-    print "exists"
     reglist=[]
     getgetlist=[]
     putputlist=[]
@@ -25,6 +24,12 @@ def parseFromOutputFile(filename, boolean):
     reglist.append("Regular API messaging")
     getgetlist.append("Get Get Pinpong")
     putputlist.append("Put Put Pingpong")
+
+    sizelist.append("Bytes")
+    iteralist.append("")
+    reglist.append("us (oneway time)")
+    getgetlist.append("us (oneway time)")
+    putputlist.append("us (oneway time)")
 
     lines = open(filename, "r");
     for line in lines:
@@ -44,7 +49,6 @@ def parseFromOutputFile(filename, boolean):
 
     if(boolean):
       numrows = len(reglist)
-      print "numrows is "+ str(numrows)
       megalist.append(sizelist)
       megalist.append(iteralist)
       megalist.append(reglist)
@@ -56,12 +60,25 @@ def parseFromOutputFile(filename, boolean):
       return numrows
 
 def printMegaList(biglist, numrows):
-  for j in range(numrows):
-    #print j
+  for i in range(numrows):
+    j=0
     for sublist in biglist:
-      print str(sublist[j]) + ",",
+      if(i==0 or i==1):
+        if(i==0):
+          if(j==3 or j==6):
+            print "Reg Mode",
+          if(j==4 or j==7):
+            print "Prereg Mode",
+          if(j==5 or j==8):
+            print "Unreg Mode",
+        print str((sublist[i])) + ",",
+      else:
+        if(j==0 or j==1):
+          print str(int(sublist[i])) + ",",
+        else:
+          print str(round(float(sublist[i]), 2)) + ",",
+      j+=1
     print
-    #print "========="
 
 
 def modifyMegaList(numrows):
@@ -77,7 +94,6 @@ for archopt in archopts_str:
   if(i==0):
     for reg_mode in reg_modes:
       outputfile = getOutputfileName(expname, archopts[i], reg_mode, run_proc);
-      print outputfile
       if(boolean):
         numrows = parseFromOutputFile(outputfile, True)
         boolean = False
@@ -86,11 +102,7 @@ for archopt in archopts_str:
   i+= 1
 
 megalistDup = list(megalist)
-printMegaList(megalist, numrows)
-print "megalist print done"
 modifyMegaList(numrows)
 printMegaList(megalist, numrows)
-print "megalist numcols is" + str(len(megalist)) + " and numrows is "+ str(numrows)
-
 
 
