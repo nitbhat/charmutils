@@ -2,8 +2,12 @@ import os
 import sys
 
 basebuild="verbs"
-basedir="/home/nbhat4/scratch/charm/"
-outputbase="/home/nbhat4/scratch/results/zc_exp/"
+#basedir="/home/nbhat4/scratch/charm/" #golub
+
+basedir="/ui/cwi/nitin/software/charm"
+
+#outputbase="/home/nbhat4/scratch/results/zc_exp/" #golub
+outputbase="/ui/cwi/nitin/software/results/zc_exp/" #iforge
 scriptbases=[
 "#!/bin/bash\n\
 #PBS -l walltime=00:10:00\n\
@@ -16,8 +20,7 @@ scriptbases=[
 #PBS -N myjob\n\
 #PBS -j oe\n"]
 
-extraRun="++mpiexec"
-
+extraRun=""
 
 #basedir="/pylon5/ac7k4vp/nbhat4/charm/"
 #outputbase="/pylon5/ac7k4vp/nbhat4/results/zc_exp/"
