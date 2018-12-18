@@ -1,0 +1,34 @@
+Charmrun> scalable start enabled. 
+Charmrun> IBVERBS version of charmrun
+Charmrun> started all node programs in 0.871 seconds.
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v6.9.0-57-g6ae9cfae9
+Warning> Randomization of virtual memory (ASLR) is turned on in the kernel, thread migration may not work! Run 'echo 0 > /proc/sys/kernel/randomize_va_space' as root to disable it, or try running with '+isomalloc_sync'.
+Charm++> scheduler running in netpoll mode.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 2 hosts (1 sockets x 1 cores x 1 PUs = 28-way SMP)
+Charm++> Warning: Internally-determined PU count does not match hwloc's result!
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Size (bytes) 		Iterations		Regular API (one-way us)	Direct Get Get (one-way us)	Direct Put Put (one-way us)
+32			1000			4.061103			9.485960			16.382933
+64			1000			3.908038			9.472489			16.241550
+128			1000			4.002929			9.382486			16.258478
+256			1000			4.180074			9.372473			16.360521
+512			1000			4.446507			9.441018			16.297460
+1024			1000			4.845023			9.840488			16.568542
+2048			1000			5.685568			9.476423			17.016053
+4096			1000			6.716490			10.517955			17.189503
+8192			1000			8.614540			10.661960			17.825007
+16384			1000			12.251019			11.658072			17.810464
+32768			1000			84.751010			14.620423			21.270514
+65536			1000			119.977951			20.024538			26.028037
+131072			1000			187.740088			29.819012			36.169410
+262144			1000			328.182578			50.391078			57.059050
+524288			1000			604.141951			91.896534			99.517941
+1048576			100			867.154598			176.054239			180.854797
+2097152			100			1660.915613			341.989994			346.239805
+4194304			100			3049.329519			680.509806			685.224533
+8388608			100			5907.660723			1452.964544			1456.664801
+16777216		100			12248.469591			2918.640375			2952.904701
+33554432		100			32083.215714			5996.440649			6014.000177
+[Partition 0][Node 0] End of program
