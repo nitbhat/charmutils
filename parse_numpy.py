@@ -9,12 +9,10 @@ def getOutputfileName(expname, archopt, reg_mode, run_proc):
     return outputdir + outputfile
 
 def parseFromOutputFileNumpy(filename, boolean):
-  #data = np.genfromtxt(filename, dtype=(int, int, float, float, float), names=('Size', 'Iterations #', 'Regular API One way Time', 'Get One way Time', 'Put One Way Time'), skip_header=23, skip_footer=1)
-  #data = np.genfromtxt(filename, dtype=float, names=('Size', 'Iterations #', 'Regular API One way Time', 'Get One way Time', 'Put One Way Time'), skip_header=23, skip_footer=1)
-  data = np.genfromtxt(filename, dtype=float, skip_header=23, skip_footer=1)
+  data = np.genfromtxt(filename, dtype=float, skip_header=header_skip_lines, skip_footer=1)
   return data
 
-titles = ["Size (B)","Size (KiB)","Size (MiB)", "#Number of Iterations","Regular API Oneway Time (us)", "REG Mode - ZC API GET Oneway Time(us)", "PREREG Mode - ZC API GET Oneway Time(us)", "UNREG Mode - ZC API GET Oneway Time(us)", "REG Mode - ZC API PUT Oneway Time(us)", "PREREG Mode - ZC API PUT Oneway Time(us)", "UNREG Mode - ZC API PUT Oneway Time(us)", "Speedup of REG Mode ZC GET over Regular API", "Percent Improvment of REG Mode ZC Get over Regular API"]
+titles = ["Size (B)","Size (KiB)","Size (MiB)", "#Number of Iterations","Regular API Oneway Time (us)", "REG Mode - ZC API GET Oneway Time(us)", "PREREG Mode - ZC API GET Oneway Time(us)", "UNREG Mode - ZC API GET Oneway Time(us)", "REG Mode - ZC API PUT Oneway Time(us)", "PREREG Mode - ZC API PUT Oneway Time(us)", "UNREG Mode - ZC API PUT Oneway Time(us)", "Speedup of REG Mode ZC GET over Regular API"]
 
 def printDataArray(data_array):
   i=0
@@ -51,44 +49,43 @@ def getMB(data_array):
   mb = data_array[:,0]/1024/1024;
   return mb;
 
-data_array = np.array([])
 
 i=0
 for archopt in archopts_str:
-  if(i==0):
-    j=0
-    for reg_mode in reg_modes:
-      outputfile = getOutputfileName(expname, archopts[i], reg_mode, run_proc);
-      data = parseFromOutputFileNumpy(outputfile, True)
-      if(j==0):
-        data_array = data
-      else:
-        data_array = np.append(data_array, data[:,3:5], axis=1)
-      j+=1
-  i+= 1
+  j=0
+  data_array = np.array([])
+  for reg_mode in reg_modes:
+    outputfile = getOutputfileName(expname, archopts[i], reg_mode, run_proc);
+    data = parseFromOutputFileNumpy(outputfile, True)
+    if(j==0):
+      data_array = data
+    else:
+      data_array = np.append(data_array, data[:,3:5], axis=1)
+    j+=1
 
-data_array_copy = np.copy(data_array)
+  data_array_copy = np.copy(data_array)
 
-data_array[:,4]=data_array_copy[:,5]
-data_array[:,5]=data_array_copy[:,7]
-data_array[:,6]=data_array_copy[:,4]
-data_array[:,7]=data_array_copy[:,6]
+  data_array[:,4]=data_array_copy[:,5]
+  data_array[:,5]=data_array_copy[:,7]
+  data_array[:,6]=data_array_copy[:,4]
+  data_array[:,7]=data_array_copy[:,6]
 
-speedup = getSpeedup(data_array)
-improv = getImprov(data_array)
+  speedup = getSpeedup(data_array)
+  improv = getImprov(data_array)
 
-kb = getKB(data_array)
-mb = getMB(data_array)
+  kb = getKB(data_array)
+  mb = getMB(data_array)
 
-print kb
+  print kb
 
-data_array_modified = np.append(data_array, speedup[:, None], axis=1)
-data_array_modified = np.append(data_array_modified, improv[:, None], axis=1)
+  data_array_modified = np.append(data_array, speedup[:, None], axis=1)
+  #data_array_modified = np.append(data_array_modified, improv[:, None], axis=1)
 
-printDataArray(data_array_modified)
+  #printDataArray(data_array_modified)
 
-data_array_modified = np.hstack((data_array_modified[:,:1], kb[:, None], mb[:, None], data_array_modified[:,1:]))
+  data_array_modified = np.hstack((data_array_modified[:,:1], kb[:, None], mb[:, None], data_array_modified[:,1:]))
 
-printDataArray(data_array_modified)
+  printDataArray(data_array_modified)
 
-#print data_array_modified
+  #print data_array_modified
+  i+=1

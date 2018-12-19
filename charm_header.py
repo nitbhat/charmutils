@@ -6,8 +6,12 @@ basebuild="verbs"
 
 basedir="/ui/cwi/nitin/software/charm/"
 
+header_skip_lines=14
+
 #outputbase="/home/nbhat4/scratch/results/zc_exp/" #golub
-outputbase="/ui/cwi/nitin/software/charmutils/results/iforge/zc_exp/" #iforge
+#outputbase="/ui/cwi/nitin/software/charmutils/results/iforge/zc_exp/" #iforge
+outputbase="/Users/nitinbhat/Work/software/charmutils/results/iforge/zc_exp/" #iforge
+
 scriptbases=[
 "#!/bin/bash\n\
 #PBS -l walltime=00:10:00\n\
