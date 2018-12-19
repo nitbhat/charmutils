@@ -1,0 +1,36 @@
+Charmrun> scalable start enabled. 
+Charmrun> IBVERBS version of charmrun
+Charmrun> started all node programs in 1.356 seconds.
+Charm++> Running in SMP mode: 2 processes, 1 worker threads (PEs) + 1 comm threads per process, 2 PEs total
+Charm++> The comm. thread only receives messages, while work threads send messages
+Converse/Charm++ Commit ID: v6.9.0-57-g6ae9cfa
+Warning> Randomization of virtual memory (ASLR) is turned on in the kernel, thread migration may not work! Run 'echo 0 > /proc/sys/kernel/randomize_va_space' as root to disable it, or try running with '+isomalloc_sync'.
+Charm++> scheduler running in netpoll mode.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map : 0
+Charm++> Running on 2 hosts (2 sockets x 12 cores x 1 PUs = 24-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Size (bytes) 		Iterations		Regular API (one-way us)	Direct Get Get (one-way us)	Direct Put Put (one-way us)
+32			1000			10.022521			17.556429			28.399110
+64			1000			10.097504			17.452002			28.503537
+128			1000			9.884477			17.650485			28.651476
+256			1000			9.592056			17.861009			30.876994
+512			1000			11.522055			22.944093			34.291506
+1024			1000			11.700392			23.084044			34.528971
+2048			1000			13.221025			23.166537			35.583496
+4096			1000			14.011025			20.505548			30.912519
+8192			1000			16.138554			21.126509			38.111448
+16384			1000			20.957947			22.446036			33.671021
+32768			1000			81.080437			29.659033			48.284054
+65536			1000			118.288517			34.891009			45.792937
+131072			1000			181.498408			69.398522			84.195495
+262144			1000			309.068561			83.587527			95.505476
+524288			1000			617.087007			148.880482			161.327958
+1048576			100			1238.424778			389.029980			291.285515
+2097152			100			2398.320436			720.310211			552.514791
+4194304			100			4271.099567			1629.310846			1407.355070
+8388608			100			8469.654322			2516.099215			2126.410007
+16777216		100			15778.975487			4859.260321			4784.399271
+33554432		100			30812.934637			8698.085546			7841.545343
+[Partition 0][Node 0] End of program

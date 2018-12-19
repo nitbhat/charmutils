@@ -4,10 +4,10 @@ import sys
 basebuild="verbs"
 #basedir="/home/nbhat4/scratch/charm/" #golub
 
-basedir="/ui/cwi/nitin/software/charm"
+basedir="/ui/cwi/nitin/software/charm/"
 
 #outputbase="/home/nbhat4/scratch/results/zc_exp/" #golub
-outputbase="/ui/cwi/nitin/software/results/zc_exp/" #iforge
+outputbase="/ui/cwi/nitin/software/charmutils/results/iforge/zc_exp/" #iforge
 scriptbases=[
 "#!/bin/bash\n\
 #PBS -l walltime=00:10:00\n\

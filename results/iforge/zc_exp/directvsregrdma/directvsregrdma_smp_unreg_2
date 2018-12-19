@@ -1,0 +1,36 @@
+Charmrun> scalable start enabled. 
+Charmrun> IBVERBS version of charmrun
+Charmrun> started all node programs in 1.366 seconds.
+Charm++> Running in SMP mode: 2 processes, 1 worker threads (PEs) + 1 comm threads per process, 2 PEs total
+Charm++> The comm. thread only receives messages, while work threads send messages
+Converse/Charm++ Commit ID: v6.9.0-57-g6ae9cfa
+Warning> Randomization of virtual memory (ASLR) is turned on in the kernel, thread migration may not work! Run 'echo 0 > /proc/sys/kernel/randomize_va_space' as root to disable it, or try running with '+isomalloc_sync'.
+Charm++> scheduler running in netpoll mode.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map : 0
+Charm++> Running on 2 hosts (2 sockets x 12 cores x 1 PUs = 24-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Size (bytes) 		Iterations		Regular API (one-way us)	Direct Get Get (one-way us)	Direct Put Put (one-way us)
+32			1000			8.728981			101.567030			101.505995
+64			1000			8.246064			99.050999			99.310398
+128			1000			8.311033			97.559929			100.939035
+256			1000			8.529067			100.883484			108.973980
+512			1000			8.881092			104.889035			107.671976
+1024			1000			9.830475			103.126526			108.006954
+2048			1000			10.874987			104.705453			113.531470
+4096			1000			12.833595			109.358549			111.244082
+8192			1000			15.047073			107.393026			121.035457
+16384			1000			19.984007			120.064497			118.173480
+32768			1000			82.854509			117.473006			121.712565
+65536			1000			120.440483			131.735444			145.744562
+131072			1000			202.580571			160.964489			153.815031
+262144			1000			320.545077			191.457510			198.094964
+524288			1000			611.001492			321.789980			328.786016
+1048576			100			1351.150274			624.835491			520.625114
+2097152			100			2421.944141			919.109583			768.885612
+4194304			100			4331.769943			1603.389978			1398.180723
+8388608			100			8217.539787			2975.305319			2738.850117
+16777216		100			16770.244837			7013.460398			6365.439892
+33554432		100			29955.450296			10164.594650			9320.399761
+[Partition 0][Node 0] End of program
