@@ -1,0 +1,45 @@
+
+Running on 2 processors:  /pylon5/ac7k4vp/nbhat4/charm/ofi-linux-x86_64/examples/charm++/zerocopy/direct_api/reg/pingpong/pingpong 32 33554432 1000 100 
+charmrun>  /usr/bin/setarch x86_64 -R  mpirun -np 2  /pylon5/ac7k4vp/nbhat4/charm/ofi-linux-x86_64/examples/charm++/zerocopy/direct_api/reg/pingpong/pingpong 32 33554432 1000 100 
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x2
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v6.9.0-55-gda95c3d
+Warning> Randomization of virtual memory (ASLR) is turned on in the kernel, thread migration may not work! Run 'echo 0 > /proc/sys/kernel/randomize_va_space' as root to disable it, or try running with '+isomalloc_sync'.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 2 hosts (2 sockets x 14 cores x 1 PUs = 28-way SMP)
+Charm++> cpu topology info is gathered in 0.001 seconds.
+Size (bytes) 		Iterations		Regular API (one-way us)	Direct Get Get (one-way us)	Direct Put Put (one-way us)
+32			1000			2.068996			5.453944			11.263490
+64			1000			2.111077			5.339026			10.509968
+128			1000			2.091527			5.417585			10.646462
+256			1000			2.147913			5.472898			10.716438
+512			1000			2.293944			5.840063			10.822058
+1024			1000			2.783537			5.583048			26.260495
+2048			1000			3.391504			5.969524			11.575937
+4096			1000			4.660964			6.717443			12.084007
+8192			1000			6.750464			7.694602			13.178945
+16384			1000			13.695478			11.142492			16.905904
+32768			1000			25.463939			13.337016			19.478440
+65536			1000			27.365446			19.059539			26.050925
+131072			1000			41.958928			25.206923			33.703566
+262144			1000			69.392085			35.652995			44.105530
+524288			1000			126.258969			57.899952			66.948056
+1048576			100			255.124569			100.220442			108.389854
+2097152			100			507.594347			186.660290			193.215609
+4194304			100			969.949961			356.069803			362.429619
+8388608			100			5664.064884			696.035624			703.289509
+16777216		100			10396.579504			1378.315687			1380.219460
+33554432		100			22105.854750			2738.444805			2737.354040
+[Partition 0][Node 0] End of program

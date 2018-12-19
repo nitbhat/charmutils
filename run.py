@@ -1,9 +1,9 @@
 from charm_header import *
 
 def getRunCommand(charmrunbase, execu, run_proc, args, archopt):
-  runcommand = charmrunbase + space + "+p"+str(run_proc) + space + execu + space + args + space + extraRun + " ++nodelist ~/nodelist"
-  if(archopts=="smp"):
-    runcommand += ".smp"
+  runcommand = charmrunbase + space + "+p"+str(run_proc) + space + execu + space + args + space + extraRun # + " ++nodelist ~/nodelist"
+  #if(archopts=="smp"):
+  #  runcommand += ".smp"
 
   return runcommand
 
@@ -15,7 +15,7 @@ for archopt in archopts_str:
   filecontents = scriptbases[i]
 
   #filecontents += "current directory is $PWD\n";
-  filecontents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID 24\n";
+  #filecontents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID 24\n";
 
   execu_base =  basedir + basearch + archopt + postdir
   for reg_mode in reg_modes:

@@ -1,0 +1,34 @@
+
+Running on 2 processors:  /pylon5/ac7k4vp/nbhat4/charm/mpi-linux-x86_64/examples/charm++/zerocopy/direct_api/unreg/pingpong/pingpong 32 33554432 1000 100 
+charmrun>  /usr/bin/setarch x86_64 -R  mpirun -np 2  /pylon5/ac7k4vp/nbhat4/charm/mpi-linux-x86_64/examples/charm++/zerocopy/direct_api/unreg/pingpong/pingpong 32 33554432 1000 100 
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: MPI_THREAD_SINGLE (desired: MPI_THREAD_SINGLE)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v6.9.0-55-gda95c3d
+Warning> Randomization of virtual memory (ASLR) is turned on in the kernel, thread migration may not work! Run 'echo 0 > /proc/sys/kernel/randomize_va_space' as root to disable it, or try running with '+isomalloc_sync'.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 2 hosts (2 sockets x 14 cores x 1 PUs = 28-way SMP)
+Charm++> cpu topology info is gathered in 0.000 seconds.
+Size (bytes) 		Iterations		Regular API (one-way us)	Direct Get Get (one-way us)	Direct Put Put (one-way us)
+32			1000			5.086064			11.740446			18.597007
+64			1000			5.284548			11.639476			19.328475
+128			1000			5.228996			11.604548			18.199563
+256			1000			5.409956			11.977434			17.827511
+512			1000			5.358458			12.171030			18.061519
+1024			1000			5.773067			12.037039			17.849445
+2048			1000			5.984068			12.727499			18.378019
+4096			1000			6.801009			14.796495			18.220544
+8192			1000			8.810997			15.549421			18.534422
+16384			1000			13.871908			17.922997			21.515012
+32768			1000			18.928051			21.573901			23.782015
+65536			1000			27.205467			26.365519			30.380964
+131072			1000			41.145563			31.741977			36.396027
+262144			1000			69.549561			43.849468			48.462987
+524288			1000			125.256062			64.401507			69.542527
+1048576			100			246.490240			106.960535			114.225149
+2097152			100			481.253862			194.569826			197.005272
+4194304			100			955.924988			362.659693			368.440151
+8388608			100			5895.974636			707.509518			709.669590
+16777216		100			10412.700176			1384.649277			1386.239529
+33554432		100			21204.935312			2747.445107			2738.569975
+[Partition 0][Node 0] End of program

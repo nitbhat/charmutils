@@ -7,5 +7,6 @@ for archopt in archopts_str:
   buildDirStr =  basedir + basearch + archopt + postdir
   print buildDirStr
   os.chdir(buildDirStr)
+  os.system("make clean")
   os.system("make -j4")
   os.chdir(cwd)
