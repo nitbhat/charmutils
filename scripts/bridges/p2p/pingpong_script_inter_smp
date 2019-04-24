@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH -p RM
+#SBATCH -t 00:10:00
+#SBATCH -N 2
+#SBATCH --ntasks-per-node 2
+
+cd /home/nbhat4/software/charm/ofi-linux-x86_64-smp-prod/examples/charm++/zerocopy/benchmarks/p2pPingpong
+make clean all
+./charmrun +p2 ./megaZCPingpong ++ppn 1 +pemap 0,2 +commap 1,3 > /home/nbhat4/software/charmutils/results/bridges/p2p/p2p_pingpong_ofi_smp_2
+
+
+cd /home/nbhat4/software/charm/mpi-linux-x86_64-smp-prod/examples/charm++/zerocopy/benchmarks/p2pPingpong
+make clean all
+./charmrun +p2 ./megaZCPingpong ++ppn 1 +pemap 0,2 +commap 1,3 > /home/nbhat4/software/charmutils/results/bridges/p2p/p2p_pingpong_mpi_smp_2
