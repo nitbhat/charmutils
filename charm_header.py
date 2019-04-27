@@ -1,25 +1,30 @@
 import os
 import sys
 
-key = 'iforge'
+key = 'edison'
 basedirs = {
-    "iforge" : "/ui/cwi/nitin/software/charm"
+    "iforge" : "/ui/cwi/nitin/software/charm",
+    "edison" : "/global/homes/n/nbhat4/software/charm"
 }
 
 charmutilsdirs = {
-    "iforge" : "/ui/cwi/nitin/software/charmutils"
+    "iforge" : "/ui/cwi/nitin/software/charmutils",
+    "edison" : "/global/homes/n/nbhat4/software/charmutils"
 }
 
 basebuilds = {
-    "iforge" : ["verbs","mpi"]
+    "iforge" : ["verbs","mpi"],
+    "edison" : ["gni","mpi"]
 }
 
 archmap = {
-    "iforge" : "-linux-x86_64"
+    "iforge" : "-linux-x86_64",
+    "edison" : "-crayxc"
 }
 
 jobscheds = {
-    "iforge" : "pbs"
+    "iforge" : "pbs",
+    "edison" : "slurm"
 }
 
 exampleDir = "/examples/charm++/zerocopy/benchmarks/"
