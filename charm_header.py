@@ -1,30 +1,35 @@
 import os
 import sys
 
-key = 'edison'
+key = 'bridges'
 basedirs = {
     "iforge" : "/ui/cwi/nitin/software/charm",
-    "edison" : "/global/homes/n/nbhat4/software/charm"
+    "edison" : "/global/homes/n/nbhat4/software/charm",
+    "bridges" : "/pylon5/ac7k4vp/nbhat4/charm"
 }
 
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
-    "edison" : "/global/homes/n/nbhat4/software/charmutils"
+    "edison" : "/global/homes/n/nbhat4/software/charmutils",
+    "bridges" : "/pylon5/ac7k4vp/nbhat4/charm"
 }
 
 basebuilds = {
     "iforge" : ["verbs","mpi"],
-    "edison" : ["gni","mpi"]
+    "edison" : ["gni","mpi"],
+    "bridges" : ["ofi","mpi"]
 }
 
 archmap = {
     "iforge" : "-linux-x86_64",
-    "edison" : "-crayxc"
+    "edison" : "-crayxc",
+    "bridges" : "-linux-x86_64"
 }
 
 jobscheds = {
     "iforge" : "pbs",
-    "edison" : "slurm"
+    "edison" : "slurm",
+    "bridges" : "slurm"
 }
 
 exampleDir = "/examples/charm++/zerocopy/benchmarks/"
