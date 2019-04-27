@@ -7,11 +7,16 @@ from charm_header import *
 # cd into it and build charm with options
 #os.chdir("charm");
 
-os.chdir(basedir);
+print 'basedir is' + str(basedirs[key])
 
-import charm_header
+# Now change the directory
+os.chdir(basedirs[key]);
 
-for archopt in archopts_str:
-  buildStr = "./build" + space + target + space+ basearch + archopt + options + num_proc + debug_opts
-  print buildStr
-  os.system(buildStr);
+print 'basebuild is' + str(basebuilds[key])
+
+for basebuild in basebuilds[key]:
+  for archopt_str in archopts_str:
+    buildStr = "./build" + space + target + space + basebuild + archmap[key]
+    buildStr += space + archopt_str + space + options + space + num_proc
+    print buildStr
+    os.system(buildStr)

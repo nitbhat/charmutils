@@ -45,14 +45,14 @@ def getPostPostArgs(basebuild, mode, append):
 while num_nodes <= max_nodes:
   smp_index=0
   for archopt_str in archopts_str:
-    scriptname = "bcast_test_" + str(num_nodes) + "_" + archopts[smp_index];
+    scriptname = "ro_bcast_test_" + str(num_nodes) + "_" + archopts[smp_index];
     fileContents= getPbsScriptBeg(num_nodes, 30, scriptname);
 
     fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n"
     for basebuild in basebuilds[key]:
       exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + exampleDir
-      outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
-      scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
+      outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "ro/";
+      scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "ro/";
 
       # run RO Bcast
       roBcastFullDir = exampleFullDir + slash + "readonlyBcast/";
@@ -68,26 +68,14 @@ while num_nodes <= max_nodes:
       while (two_power <= 25):
         ro_size = 2**two_power;
         args         = str(ro_size);
-        runComm1 = charmRunDir + space + "+p" + pval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4) else " >> ") + outputFile
-        runComm2 = charmRunDir + space + "+p" + pval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
-        fileContents += runComm1 + "\n"
-        fileContents += runComm2 + "\n\n\n\n"
+        iteration = 1;
+        while (iteration <= 10):
+          runComm1 = charmRunDir + space + "+p" + pval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4 and iteration == 1) else " >> ") + outputFile
+          runComm2 = charmRunDir + space + "+p" + pval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
+          fileContents += runComm1 + "\n"
+          fileContents += runComm2 + "\n\n\n\n"
+          iteration = iteration + 1;
         two_power = two_power + 1
-
-      # run bcast
-      bcastFullDir = exampleFullDir + slash + "bcastPingAll/";
-      charmRunDir  = bcastFullDir + "/charmrun ";
-      execPath     = bcastFullDir + "/ping_all ";
-      pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
-      args         = " 16 33554432 10 4 0 "
-      postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index])
-      postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
-      outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
-
-      runComm = charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
-      fileContents += runComm + "\n\n\n\n"
-
-
 
     #print "======================================================="
     #print fileContents
@@ -96,6 +84,7 @@ while num_nodes <= max_nodes:
     script.write(fileContents)
     sys.stdout.flush();
     smp_index = smp_index + 1;
+  #os.system("qsub "+scriptDir + scriptname)
   num_nodes = num_nodes*2
 
 

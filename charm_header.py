@@ -1,7 +1,55 @@
 import os
 import sys
 
-basebuild="ofi"
+key = 'edison'
+basedirs = {
+    "iforge" : "/ui/cwi/nitin/software/charm",
+    "edison" : "/global/homes/n/nbhat4/software/charm"
+}
+
+charmutilsdirs = {
+    "iforge" : "/ui/cwi/nitin/software/charmutils",
+    "edison" : "/global/homes/n/nbhat4/software/charmutils"
+}
+
+basebuilds = {
+    "iforge" : ["verbs","mpi"],
+    "edison" : ["gni","mpi"]
+}
+
+archmap = {
+    "iforge" : "-linux-x86_64",
+    "edison" : "-crayxc"
+}
+
+jobscheds = {
+    "iforge" : "pbs",
+    "edison" : "slurm"
+}
+
+exampleDir = "/examples/charm++/zerocopy/benchmarks/"
+
+archopts=["nonsmp","smp"]
+archopts_str=["","smp"]
+archopts_str1=["","-smp"]
+
+hyphen="-"
+slash="/"
+space=" "
+target="charm++"
+suffix="prod"
+#basearch = basebuild+"-linux-x86_64"
+options = " --with-production --enable-error-checking --suffix="+suffix
+build_proc=16
+num_proc = " -j"+str(build_proc) + " "
+debug_opts=""
+
+
+
+#buildmodes = ["smp","nonsmp"]
+
+
+#basebuild="verbs"
 #basedir="/home/nbhat4/scratch/charm/" #golub
 
 #basedir="/ui/cwi/nitin/software/charm/"
@@ -44,17 +92,6 @@ scriptbases=[
 
 #
 
-
-archopts=["nonsmp","smp"]
-archopts_str=["","-smp"]
-
-space=" "
-target="charm++"
-basearch = basebuild+"-linux-x86_64"
-options = " --with-production --enable-error-checking "
-build_proc=16
-num_proc = " -j"+str(build_proc) + " "
-debug_opts=""
 
 postdir="/examples/charm++/zerocopy/direct_api/"
 

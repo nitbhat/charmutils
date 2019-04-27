@@ -3,10 +3,11 @@ from charm_header import *
 
 cwd = os.getcwd()
 
-for archopt in archopts_str:
-  buildDirStr =  basedir + basearch + archopt + postdir
-  print buildDirStr
-  os.chdir(buildDirStr)
-  os.system("make clean")
-  os.system("make -j4")
-  os.chdir(cwd)
+for basebuild in basebuilds[key]:
+  for archopt_str in archopts_str1:
+    exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopt_str + hyphen + suffix + exampleDir
+    print exampleFullDir
+    os.chdir(exampleFullDir)
+    os.system("make clean")
+    os.system("make -j4")
+    os.chdir(cwd)
