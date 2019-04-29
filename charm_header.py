@@ -1,7 +1,7 @@
 import os
 import sys
 
-key = 'edison'
+key = 'bridges'
 basedirs = {
     "iforge" : "/ui/cwi/nitin/software/charm",
     "edison" : "/global/homes/n/nbhat4/software/charm",
@@ -11,7 +11,7 @@ basedirs = {
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
     "edison" : "/global/homes/n/nbhat4/software/charmutils",
-    "bridges" : "/pylon5/ac7k4vp/nbhat4/charm"
+    "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils"
 }
 
 basebuilds = {
@@ -36,6 +36,12 @@ proc_per_node_map = {
     "iforge" : 2,
     "edison" : 2,
     "bridges" : 2
+}
+
+launcher_map = {
+    "iforge" : "charmrun",
+    "edison" : "srun",
+    "bridges" : "mpirun"
 }
 
 jobscheds = {
