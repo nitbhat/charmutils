@@ -2,17 +2,56 @@ from charm_header import *
 
 num_nodes=1
 max_nodes=32
-ppn = 24
-proc_per_node=2
+ppn = ppnmap[key]
+proc_per_node=proc_per_node_map[key]
 
 
-def getPbsScriptBeg(num_nodes, mins, jobname):
-  scriptbeg = "#!/bin/bash\n";
-  scriptbeg += "#PBS -N " + jobname + "\n";
-  scriptbeg += "#PBS -l walltime=00:" + str(mins) + ":00\n";
-  scriptbeg += "#PBS -l nodes=" + str(num_nodes) + ":ppn=24\n";
-  #scriptbeg += "#PBS -j oe\n";
+def getScriptBeg(num_nodes, mins, jobname):
+  if(jobscheds[key] == "pbs"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#PBS -N " + jobname + "\n";
+    scriptbeg += "#PBS -l walltime=00:" + str(mins) + ":00\n";
+    scriptbeg += "#PBS -l nodes=" + str(num_nodes) + ":ppn=24\n";
+  elif(jobscheds[key] == "slurm"):
+    scriptbeg = "#!/bin/bash -l\n";
+    scriptbeg += "#SBATCH -q regular\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
   return scriptbeg
+
+def getScriptEnd(num_nodes,proc_per_node, mode):
+  if(key=="edison"):
+    nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
+    tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
+    cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
+    fileContents = "#SBATCH -n "+nval+"\n";
+    fileContents += "#SBATCH --ntasks-per-node="+tasks_per_node+"\n";
+  elif(key == "iforge"):
+      fileContents = "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
+  return fileContents;
+
+def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
+  exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + exampleDir
+  outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
+
+  # run bcast
+  bcastFullDir = exampleFullDir + slash + "bcastPingAll/";
+  charmRunDir  = "srun ";
+  execPath     = bcastFullDir + "/ping_all ";
+  pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
+  nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
+  cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
+  args         = " 16 33554432 10 4 0 "
+  postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index])
+  postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
+  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
+
+  if(key == "edison"):
+    runComm = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+  elif(key == "iforge"):
+    runComm = charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+  return runComm
+
 
 def getPValue(num_nodes, proc_per_node, mode):
   if mode == "smp":
@@ -23,6 +62,37 @@ def getPValue(num_nodes, proc_per_node, mode):
       return p
   else:
     return ppn * num_nodes
+
+def getNValue(num_nodes, proc_per_node, mode):
+  if mode == "smp":
+    if num_nodes == 1:
+      return 1
+    else:
+      n = proc_per_node*num_nodes
+      return n
+  else:
+    return ppn * num_nodes
+
+def getCValue(num_nodes, proc_per_node, mode):
+  if mode == "smp":
+    if num_nodes == 1:
+      return ppn
+    else:
+      c = ppn/proc_per_node
+      return c;
+  else:
+    return 1;
+
+def getTasksPerNodeValue(num_nodes, proc_per_node, mode):
+  if mode == "smp":
+    if num_nodes == 1:
+      return 1
+    else:
+      return proc_per_node
+  else:
+    return ppn;
+
+
 
 def getPostArgs(num_nodes, proc_per_node, mode):
   if mode == "smp":
@@ -46,25 +116,12 @@ while num_nodes <= max_nodes:
   smp_index=0
   for archopt_str in archopts_str:
     scriptname = "reg_bcast_test_" + str(num_nodes) + "_" + archopts[smp_index];
-    fileContents= getPbsScriptBeg(num_nodes, 30, scriptname);
+    fileContents= getScriptBeg(num_nodes, 30, scriptname);
+    fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
 
-    fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n"
     for basebuild in basebuilds[key]:
-      exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + exampleDir
-      outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
       scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
-
-      # run bcast
-      bcastFullDir = exampleFullDir + slash + "bcastPingAll/";
-      charmRunDir  = bcastFullDir + "/charmrun ";
-      execPath     = bcastFullDir + "/ping_all ";
-      pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
-      args         = " 16 33554432 10 4 0 "
-      postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index])
-      postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
-      outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
-
-      runComm = charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+      runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild);
       fileContents += runComm + "\n\n\n\n"
 
     #print "======================================================="
@@ -75,42 +132,3 @@ while num_nodes <= max_nodes:
     sys.stdout.flush();
     smp_index = smp_index + 1;
   num_nodes = num_nodes*2
-
-
-#
-#def getRunCommand(charmrunbase, execu, run_proc, args, archopt):
-#  runcommand = charmrunbase + space + "+p"+str(run_proc) + space + execu + space + args + space + extraRun + " ++nodelist ~/nodelist"
-#  if(archopts=="smp"):
-#    runcommand += ".smp"
-#
-#  return runcommand
-#
-#outputdir = outputbase + expname + "/"
-#
-#i=0
-#for archopt in archopts_str:
-#  scriptname= "script" + "_" + expname + "_" + str(run_proc) + "_" + example + "_" + archopts[i]
-#  filecontents = scriptbases[i]
-#
-#  #filecontents += "current directory is $PWD\n";
-#  filecontents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID 24\n";
-#
-#  execu_base =  basedir + basearch + archopt + postdir
-#  for reg_mode in reg_modes:
-#    charmrunbase = execu_base + reg_mode + "/" + example + "/" + "charmrun"
-#    execu = execu_base + reg_mode + "/" + example + "/" + example
-#    runcommand = getRunCommand(charmrunbase, execu, run_proc, args[i], archopts[i])
-#
-#    outputfile = expname + "_" + archopts[i] + "_" + reg_mode + "_" + str(run_proc)
-#    runcommand_out = runcommand + " > " + outputdir + outputfile
-#    filecontents += runcommand_out + "\n"
-#
-#  print filecontents
-#  print "============================"
-#
-#
-#  script = open(scriptname, "w+");
-#  script.write(filecontents)
-#  sys.stdout.flush();
-#  i += 1
-#
