@@ -37,12 +37,18 @@ def getScriptEnd(num_nodes,proc_per_node, mode):
   return fileContents;
 
 def getSmpType(basebuild):
-  if key=="bridges":
-    return "regular"
-  elif key=="iforge":
-    if basebuild == "mpi":
-      return "weird"
+  #if key=="bridges":
+  #  return "regular"
+  #elif key=="iforge":
+  #  if basebuild == "mpi":
+  #    return "weird"
   return "regular"
+
+def attachPath(bcastFullDir):
+  if key=="iforge":
+    return bcastFullDir
+  else:
+    return ""
 
 def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
   runComm = ""
@@ -51,7 +57,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
 
   # run bcast
   bcastFullDir = exampleFullDir + slash + "bcastPingAll/";
-  charmRunDir  = launcher_map[key];
+  charmRunDir  = attachPath(bcastFullDir) + launcher_map[key];
   execPath     = bcastFullDir + "/ping_all ";
   pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
   nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
@@ -162,14 +168,16 @@ while num_nodes <= max_nodes:
       runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild);
       fileContents += runComm + "\n\n\n\n"
 
-    #print "======================================================="
-    #print fileContents
-    #print "======================================================="
+    print "======================================================="
+    print fileContents
+    print "======================================================="
 
     script = open(scriptDir + scriptname, "w+");
     script.write(fileContents)
     sys.stdout.flush();
 
+    #if(archopts[smp_index] == "nonsmp"):
+    #  os.system("qsub -S "+scriptDir + scriptname)
+
     smp_index = smp_index + 1;
-  #os.system("qsub "+scriptDir + scriptname)
   num_nodes = num_nodes*2

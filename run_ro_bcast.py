@@ -37,12 +37,18 @@ def getScriptEnd(num_nodes,proc_per_node, mode):
   return fileContents;
 
 def getSmpType(basebuild):
-  if key=="bridges":
-    return "regular"
-  elif key=="iforge":
-    if basebuild == "mpi":
-      return "weird"
+  #if key=="bridges":
+  #  return "regular"
+  #elif key=="iforge":
+  #  if basebuild == "mpi":
+  #    return "weird"
   return "regular"
+
+def attachPath(bcastFullDir):
+  if key=="iforge":
+    return bcastFullDir
+  else:
+    return ""
 
 def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power):
   exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + exampleDir
@@ -50,7 +56,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration,
 
   # run bcast
   roBcastFullDir = exampleFullDir + slash + "readonlyBcast/";
-  charmRunDir  = launcher_map[key];
+  charmRunDir  = attachPath(roBcastFullDir) + launcher_map[key];
   execPath1    = roBcastFullDir + "/readonlyBcast ";
   execPath2    = roBcastFullDir + "/readonlyZCBcast ";
   pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
@@ -166,7 +172,7 @@ while num_nodes <= max_nodes:
         ro_size = 2**two_power;
         args         = str(ro_size);
         iteration = 1;
-        while (iteration <= 10):
+        while (iteration <= 3):
           runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power);
           fileContents += runComm + "\n\n\n\n"
           iteration = iteration + 1;

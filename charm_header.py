@@ -1,7 +1,7 @@
 import os
 import sys
 
-key = 'bridges'
+key = 'iforge'
 basedirs = {
     "iforge" : "/ui/cwi/nitin/software/charm",
     "edison" : "/global/homes/n/nbhat4/software/charm",
@@ -15,7 +15,7 @@ charmutilsdirs = {
 }
 
 basebuilds = {
-    "iforge" : ["mpi","verbs"],
+    "iforge" : ["verbs","mpi"],
     "edison" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"]
 }
