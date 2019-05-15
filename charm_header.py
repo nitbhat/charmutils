@@ -1,56 +1,64 @@
 import os
 import sys
 
-key = 'iforge'
+key = 'hpcadv'
 basedirs = {
     "iforge" : "/ui/cwi/nitin/software/charm",
     "edison" : "/global/homes/n/nbhat4/software/charm",
-    "bridges" : "/pylon5/ac7k4vp/nbhat4/charm"
+    "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
+    "hpcadv" : "/global/home/users/nitinb/charm_1"
 }
 
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
     "edison" : "/global/homes/n/nbhat4/software/charmutils",
-    "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils"
+    "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
+    "hpcadv" : "/global/home/users/nitinb/charmutils"
 }
 
 basebuilds = {
+    "hpcadv" : ["ucx","verbs","mpi"],
     "iforge" : ["verbs","mpi"],
     "edison" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"]
 }
 
 archmap = {
+    "hpcadv" : "-linux-x86_64",
     "iforge" : "-linux-x86_64",
     "edison" : "-crayxc",
     "bridges" : "-linux-x86_64"
 }
 
 ppnmap = {
+    "hpcadv" : 24,
     "iforge" : 24,
     "edison" : 24,
     "bridges" : 28
 }
 
 proc_per_node_map = {
+    "hpcadv" : 2,
     "iforge" : 2,
     "edison" : 2,
     "bridges" : 2
 }
 
 launcher_map = {
+    "hpcadv" : "charmrun",
     "iforge" : "charmrun",
     "edison" : "srun",
     "bridges" : "mpirun"
 }
 
 jobscheds = {
+    "hpcadv" : "slurm",
     "iforge" : "pbs",
     "edison" : "slurm",
     "bridges" : "slurm"
 }
 
-exampleDir = "/examples/charm++/zerocopy/benchmarks/"
+exampleDir = "/benchmarks/charm++/zerocopy/"
 
 archopts=["nonsmp","smp"]
 archopts_str=["","smp"]
