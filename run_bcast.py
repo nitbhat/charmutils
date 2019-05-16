@@ -22,11 +22,16 @@ def getScriptBeg(num_nodes, mins, jobname):
     scriptbeg += "#SBATCH -p RM\n";
     scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+  elif(jobscheds[key] == "slurm" and key=="hpcadv"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#SBATCH -p thor\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
   return scriptbeg
 
 def getScriptEnd(num_nodes,proc_per_node, mode):
   fileContents = "";
-  if(key=="edison" or key=="bridges"):
+  if(key=="edison" or key=="bridges" or key=="hpcadv"):
     nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
     tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
     cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
@@ -45,14 +50,14 @@ def getSmpType(basebuild):
   return "regular"
 
 def attachPath(bcastFullDir):
-  if key=="iforge":
+  if key=="iforge" or key=="hpcadv":
     return bcastFullDir
   else:
     return ""
 
-def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
+def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
   runComm = ""
-  exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + exampleDir
+  exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
   outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
 
   # run bcast
@@ -62,10 +67,10 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
   pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
   nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
   cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
-  args         = " 16 33554432 10 4 0 "
+  args         = " 16 33554432 50 10 0 "
   postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index], getSmpType(basebuild))
   postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
-  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
+  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + ("_" if extraSuffix != "" else "") + extraSuffix + "_" +  archopts[smp_index]
 
   if(key == "edison"):
     runComm += charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
@@ -73,6 +78,15 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
     runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
   elif(key == "iforge"):
     runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+  elif(key == "hpcadv"):
+    if(basebuild == "verbs"):
+      runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+    else:
+      runComm += "mpirun" + space + "-n " + nval + space + execPath
+      runComm += space + args
+      print postargs
+      runComm += space + postargs
+      runComm += space + postpostargs + " > " + outputFile
   return runComm
 
 
@@ -127,6 +141,8 @@ def getPostArgs(num_nodes, proc_per_node, mode, smpType):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-10,12-22 +commap 11,23"
         elif(ppn == 28):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-12,14-26 +commap 13,27"
+        elif(ppn == 32):
+          return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-14,16-30 +commap 15,31"
     else:
       if mode == "smp":
         if num_nodes == 1:
@@ -154,6 +170,9 @@ def getPostPostArgs(basebuild, mode, append):
         return "++nodelist ~/nodelist" + append + ".smp"
       else:
         return "++nodelist ~/nodelist" + append
+  if key == 'hpcadv':
+    if basebuild == 'verbs':
+      return "++mpiexec"
   return ""
 
 while num_nodes <= max_nodes:
@@ -165,8 +184,21 @@ while num_nodes <= max_nodes:
 
     for basebuild in basebuilds[key]:
       scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
-      runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild);
-      fileContents += runComm + "\n\n\n\n"
+      extraSuffix= ""
+      if(basebuild == "mpi"):
+        extraSuffix="ompi"
+        runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+        fileContents += runComm + "\n\n\n\n"
+
+        fileContents += "module unload hpcx/2.4.0-pre\n"
+        fileContents += "module load impi/2018.4.274\n"
+
+        extraSuffix="impi"
+        runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+        fileContents += runComm + "\n\n\n\n"
+      else:
+        runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+        fileContents += runComm + "\n\n\n\n"
 
     print "======================================================="
     print fileContents

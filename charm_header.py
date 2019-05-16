@@ -31,7 +31,7 @@ archmap = {
 }
 
 ppnmap = {
-    "hpcadv" : 24,
+    "hpcadv" : 32,
     "iforge" : 24,
     "edison" : 24,
     "bridges" : 28
