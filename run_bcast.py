@@ -55,9 +55,9 @@ def attachPath(bcastFullDir):
   else:
     return ""
 
-def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
+def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir):
   runComm = ""
-  exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
+  exampleFullDir = basedir + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
   outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
 
   # run bcast
@@ -69,15 +69,27 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
   cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
   args         = " 16 33554432 50 10 0 "
   postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index], getSmpType(basebuild))
-  postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
+  if(key == "iforge"):
+    postpostargs = getPostPostArgs(basebuild, archopts[smp_index], ".$PBS_JOBID")
+  else:
+    postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
   outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + ("_" if extraSuffix != "" else "") + extraSuffix + "_" +  archopts[smp_index]
+
+
+  if(path.exists(outputFile)):
+    print "file exists"
+    os.remove(outputFile);
+  else:
+    print "file does not exist"
+
+
 
   if(key == "edison"):
     runComm += charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
   elif(key == "bridges"):
     runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
   elif(key == "iforge"):
-    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " >> " + outputFile
   elif(key == "hpcadv"):
     if(basebuild == "verbs"):
       runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
@@ -167,9 +179,9 @@ def getPostPostArgs(basebuild, mode, append):
   if key == 'iforge':
     if basebuild == 'verbs':
       if mode == 'smp':
-        return "++nodelist ~/nodelist" + append + ".smp"
+        return "++nodelist ~/.nodelist" + append + ".smp"
       else:
-        return "++nodelist ~/nodelist" + append
+        return "++nodelist ~/.nodelist" + append
   if key == 'hpcadv':
     if basebuild == 'verbs':
       return "++mpiexec"
@@ -183,21 +195,22 @@ while num_nodes <= max_nodes:
     fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
 
     for basebuild in basebuilds[key]:
-      scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
-      extraSuffix= ""
-      if(basebuild == "mpi"):
-        extraSuffix="ompi"
-        runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
-        fileContents += runComm + "\n\n\n\n"
+      for basedir in basedirs[key]:
+        scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
+        extraSuffix= ""
+        if(basebuild == "mpi"):
+          extraSuffix="ompi"
+          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir);
+          fileContents += runComm + "\n\n\n\n"
 
-        fileContents += "module unload hpcx/2.4.0-pre\n"
-        fileContents += "module load impi/2018.4.274\n"
+          fileContents += "module unload hpcx/2.4.0-pre\n"
+          fileContents += "module load impi/2018.4.274\n"
 
-        extraSuffix="impi"
-        runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
-        fileContents += runComm + "\n\n\n\n"
-      else:
-        runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+          extraSuffix="impi"
+          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir);
+          fileContents += runComm + "\n\n\n\n"
+        else:
+          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir);
         fileContents += runComm + "\n\n\n\n"
 
     print "======================================================="

@@ -1,9 +1,10 @@
 import os
 import sys
+from os import path
 
-key = 'hpcadv'
+key = 'iforge'
 basedirs = {
-    "iforge" : "/ui/cwi/nitin/software/charm",
+    "iforge" : ["/ui/cwi/nitin/software/charm","/ui/cwi/nitin/software/charm"],
     "edison" : "/global/homes/n/nbhat4/software/charm",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm_1"
@@ -59,10 +60,13 @@ jobscheds = {
 }
 
 exampleDir = "/benchmarks/charm++/zerocopy/"
+#archopts=["nonsmp","smp"]
+#archopts_str=["","smp"]
+#archopts_str1=["","-smp"]
 
-archopts=["nonsmp","smp"]
-archopts_str=["","smp"]
-archopts_str1=["","-smp"]
+archopts=["smp"]
+archopts_str=["smp"]
+archopts_str1=["-smp"]
 
 hyphen="-"
 slash="/"
