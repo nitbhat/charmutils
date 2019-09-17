@@ -2,7 +2,8 @@ import os
 import sys
 from os import path
 
-key = 'iforge'
+key = 'edison'
+buildType = 'prod'
 basedirs = {
     "iforge" : ["/ui/cwi/nitin/software/charm","/ui/cwi/nitin/software/charm"],
     "edison" : "/global/homes/n/nbhat4/software/charm",
@@ -63,6 +64,16 @@ exampleDir = "/benchmarks/charm++/zerocopy/"
 #archopts=["nonsmp","smp"]
 #archopts_str=["","smp"]
 #archopts_str1=["","-smp"]
+
+buildTypeMap = {
+    "prod" : "--with-production --enable-error-checking --suffix=prod",
+    "debug" : "--enable-error-checking --suffix=debug"
+}
+
+buildTypeMap2 = {
+    "prod" : "",
+    "debug" : " -g -O0 "
+}
 
 archopts=["smp"]
 archopts_str=["smp"]
