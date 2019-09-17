@@ -1,8 +1,18 @@
 import os
 import sys
 from os import path
+import socket
 
-key = 'iforge'
+hostname_full = socket.gethostname();
+#os.system('hostname')
+
+print hostname_full
+
+if(hostname_full.find('bridges') != -1):
+  key='bridges'
+else:
+  key = 'iforge'
+
 basedirs = {
     "iforge" : ["/ui/cwi/nitin/software/charm","/ui/cwi/nitin/software/charm"],
     "edison" : "/global/homes/n/nbhat4/software/charm",
@@ -60,13 +70,13 @@ jobscheds = {
 }
 
 exampleDir = "/benchmarks/charm++/zerocopy/"
-#archopts=["nonsmp","smp"]
-#archopts_str=["","smp"]
-#archopts_str1=["","-smp"]
+archopts=["nonsmp","smp"]
+archopts_str=["","smp"]
+archopts_str1=["","-smp"]
 
-archopts=["smp"]
-archopts_str=["smp"]
-archopts_str1=["-smp"]
+#archopts=["smp"]
+#archopts_str=["smp"]
+#archopts_str1=["-smp"]
 
 hyphen="-"
 slash="/"

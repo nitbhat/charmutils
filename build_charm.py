@@ -19,4 +19,4 @@ for basebuild in basebuilds[key]:
     buildStr = "./build" + space + target + space + basebuild + archmap[key]
     buildStr += space + archopt_str + space + options + space + num_proc
     print buildStr
-    #os.system(buildStr)
+    os.system(buildStr)
