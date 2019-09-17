@@ -1,19 +1,31 @@
 import os
 import sys
 from os import path
+import socket
 
-key = 'edison'
+hostname_full = socket.gethostname();
+#os.system('hostname')
+
+print hostname_full
+
+if(hostname_full.find('bridges') != -1):
+  key='bridges'
+elif(hostname_full.find('cori') != -1):
+  key="cori"
+else:
+  key = 'iforge'
+
 buildType = 'prod'
 basedirs = {
     "iforge" : ["/ui/cwi/nitin/software/charm","/ui/cwi/nitin/software/charm"],
-    "edison" : "/global/homes/n/nbhat4/software/charm",
+    "cori" : "/global/homes/n/nbhat4/software/charm_2",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm_1"
 }
 
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
-    "edison" : "/global/homes/n/nbhat4/software/charmutils",
+    "cori" : "/global/homes/n/nbhat4/software/charmutils",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils"
 }
@@ -21,49 +33,49 @@ charmutilsdirs = {
 basebuilds = {
     "hpcadv" : ["ucx","verbs","mpi"],
     "iforge" : ["verbs","mpi"],
-    "edison" : ["mpi","gni"],
+    "cori" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"]
 }
 
 archmap = {
     "hpcadv" : "-linux-x86_64",
     "iforge" : "-linux-x86_64",
-    "edison" : "-crayxc",
+    "cori" : "-crayxc",
     "bridges" : "-linux-x86_64"
 }
 
 ppnmap = {
     "hpcadv" : 32,
     "iforge" : 24,
-    "edison" : 24,
+    "cori" : 24,
     "bridges" : 28
 }
 
 proc_per_node_map = {
     "hpcadv" : 2,
     "iforge" : 2,
-    "edison" : 2,
+    "cori" : 2,
     "bridges" : 2
 }
 
 launcher_map = {
     "hpcadv" : "charmrun",
     "iforge" : "charmrun",
-    "edison" : "srun",
+    "cori" : "srun",
     "bridges" : "mpirun"
 }
 
 jobscheds = {
     "hpcadv" : "slurm",
     "iforge" : "pbs",
-    "edison" : "slurm",
+    "cori" : "slurm",
     "bridges" : "slurm"
 }
 
 exampleDir = "/benchmarks/charm++/zerocopy/"
-#archopts=["nonsmp","smp"]
-#archopts_str=["","smp"]
-#archopts_str1=["","-smp"]
+archopts=["nonsmp","smp"]
+archopts_str=["","smp"]
+archopts_str1=["","-smp"]
 
 buildTypeMap = {
     "prod" : "--with-production --enable-error-checking --suffix=prod",
@@ -75,10 +87,10 @@ buildTypeMap2 = {
     "debug" : " -g -O0 "
 }
 
-archopts=["smp"]
-archopts_str=["smp"]
-archopts_str1=["-smp"]
-
+#archopts=["smp"]
+#archopts_str=["smp"]
+#archopts_str1=["-smp"]
+#
 hyphen="-"
 slash="/"
 space=" "
