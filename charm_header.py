@@ -99,6 +99,16 @@ buildTypeMap2 = {
     "debug" : " -g -O0 "
 }
 
+skipHeaderLineMap = {
+    "ofi" : 20,
+    "mpi" : 10
+}
+
+smpSkipLinesModifierMap = {
+    "mpi" : 2,
+    "ofi" : 3
+}
+
 #archopts=["smp"]
 #archopts_str=["smp"]
 #archopts_str1=["-smp"]
@@ -124,7 +134,6 @@ debug_opts=""
 
 #basedir="/ui/cwi/nitin/software/charm/"
 
-header_skip_lines=26
 
 #outputbase="/home/nbhat4/scratch/results/zc_exp/" #golub
 #outputbase="/ui/cwi/nitin/software/charmutils/results/iforge/zc_exp/" #iforge
@@ -173,3 +182,11 @@ expname="directvsregrdma"
 filecontents=""
 
 args=["32 33554432 1000 100","32 33554432 1000 100 ++ppn 1 +pemap 0 +commap 1"]
+
+#Util Methods
+
+def getOutputFile(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
+  outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
+  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + ("_" if extraSuffix != "" else "") + extraSuffix + "_" +  archopts[smp_index]
+  return outputFile
+

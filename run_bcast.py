@@ -1,7 +1,7 @@
 from charm_header import *
 
 num_nodes=1
-max_nodes=32
+max_nodes=128
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -66,7 +66,6 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
   runComm = ""
   basedir = basedirs[key]
   exampleFullDir = basedir + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
-  outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
 
   # run bcast
   bcastFullDir = exampleFullDir + slash + "bcastPingAll/";
@@ -81,12 +80,12 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
     postpostargs = getPostPostArgs(basebuild, archopts[smp_index], ".$PBS_JOBID")
   else:
     postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
-  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + ("_" if extraSuffix != "" else "") + extraSuffix + "_" +  archopts[smp_index]
+  outputFile = getOutputFile(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
 
 
   if(path.exists(outputFile)):
     print "file exists"
-    os.remove(outputFile);
+    #os.remove(outputFile);
   else:
     print "file does not exist"
 
