@@ -5,6 +5,10 @@ max_nodes=32
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
+print "key is " + key
+
+print " basedir is " + basedirs[key]
+
 
 def getScriptBeg(num_nodes, mins, jobname):
   if(jobscheds[key] == "pbs"):
@@ -31,14 +35,17 @@ def getScriptBeg(num_nodes, mins, jobname):
 
 def getScriptEnd(num_nodes,proc_per_node, mode):
   fileContents = "";
-  if(key=="edison" or key=="bridges" or key=="hpcadv"):
+  if(key == "iforge"):
+    fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
+  elif(key == "golub"):
+    # do nothing
+    pass
+  else:
     nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
     tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
     cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
     fileContents += "#SBATCH -n "+nval+"\n";
     fileContents += "#SBATCH --ntasks-per-node="+tasks_per_node+"\n";
-  elif(key == "iforge"):
-    fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
   return fileContents;
 
 def getSmpType(basebuild):
@@ -50,13 +57,14 @@ def getSmpType(basebuild):
   return "regular"
 
 def attachPath(bcastFullDir):
-  if key=="iforge" or key=="hpcadv":
+  if key=="iforge" or key=="hpcadv" or key=="golub":
     return bcastFullDir
   else:
     return ""
 
-def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir):
+def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
   runComm = ""
+  basedir = basedirs[key]
   exampleFullDir = basedir + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
   outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
 
@@ -89,8 +97,8 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, bas
   elif(key == "bridges"):
     runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
   elif(key == "iforge"):
-    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " >> " + outputFile
-  elif(key == "hpcadv"):
+    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+  elif(key == "hpcadv" or key == "golub"):
     if(basebuild == "verbs"):
       runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
     else:
@@ -181,8 +189,8 @@ def getPostPostArgs(basebuild, mode, append):
       if mode == 'smp':
         return "++nodelist ~/.nodelist" + append + ".smp"
       else:
-        return "++nodelist ~/.nodelist" + append
-  if key == 'hpcadv':
+        return "++nodelist ~/nodelist" + append
+  if key == 'hpcadv' or 'golub':
     if basebuild == 'verbs':
       return "++mpiexec"
   return ""
@@ -195,23 +203,26 @@ while num_nodes <= max_nodes:
     fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
 
     for basebuild in basebuilds[key]:
-      for basedir in basedirs[key]:
-        scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
-        extraSuffix= ""
-        if(basebuild == "mpi"):
-          extraSuffix="ompi"
-          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir);
-          fileContents += runComm + "\n\n\n\n"
+      scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
+      extraSuffix= ""
+      #if(basebuild == "mpi"):
+      #  extraSuffix="ompi"
+      #  runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+      #  fileContents += runComm + "\n\n\n\n"
 
-          fileContents += "module unload hpcx/2.4.0-pre\n"
-          fileContents += "module load impi/2018.4.274\n"
+      #  if key == "golub":
+      #    fileContents += "module unload openmpi/3.1.1-gcc-7.2.0\n"
+      #    fileContents += "module load mvapich2/2.3rc2-gcc-7.2.0\n"
+      #  if key == "hpcadv":
+      #    fileContents += "module unload hpcx/2.4.0-pre\n"
+      #    fileContents += "module load impi/2018.4.274\n"
 
-          extraSuffix="impi"
-          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir);
-          fileContents += runComm + "\n\n\n\n"
-        else:
-          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix, basedir);
-        fileContents += runComm + "\n\n\n\n"
+      #  extraSuffix="mvapich"
+      #  runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+      #  fileContents += runComm + "\n\n\n\n"
+      #else:
+      runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
+      fileContents += runComm + "\n\n\n\n"
 
     print "======================================================="
     print fileContents

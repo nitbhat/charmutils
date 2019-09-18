@@ -12,64 +12,76 @@ if(hostname_full.find('bridges') != -1):
   key='bridges'
 elif(hostname_full.find('cori') != -1):
   key="cori"
+elif(hostname_full.find('golub') != -1):
+  key="golub"
 else:
   key = 'iforge'
 
 buildType = 'prod'
 basedirs = {
-    "iforge" : ["/ui/cwi/nitin/software/charm","/ui/cwi/nitin/software/charm"],
+    "iforge" : "/ui/cwi/nitin/software/charm",
     "cori" : "/global/homes/n/nbhat4/software/charm_2",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
-    "hpcadv" : "/global/home/users/nitinb/charm_1"
+    "hpcadv" : "/global/home/users/nitinb/charm_1",
+    "golub" : "/home/nbhat4/charm"
 }
 
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
     "cori" : "/global/homes/n/nbhat4/software/charmutils",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
-    "hpcadv" : "/global/home/users/nitinb/charmutils"
+    "hpcadv" : "/global/home/users/nitinb/charmutils",
+    "golub" : "/home/nbhat4/charmutils"
 }
 
 basebuilds = {
     "hpcadv" : ["ucx","verbs","mpi"],
     "iforge" : ["verbs","mpi"],
     "cori" : ["mpi","gni"],
-    "bridges" : ["mpi","ofi"]
+    "bridges" : ["mpi","ofi"],
+    "golub" : ["ucx","verbs", "mpi"]
 }
 
 archmap = {
     "hpcadv" : "-linux-x86_64",
     "iforge" : "-linux-x86_64",
     "cori" : "-crayxc",
-    "bridges" : "-linux-x86_64"
+    "bridges" : "-linux-x86_64",
+    "golub" : "-linux-x86_64"
 }
 
 ppnmap = {
     "hpcadv" : 32,
     "iforge" : 24,
     "cori" : 24,
-    "bridges" : 28
+    "edison" : 24,
+    "bridges" : 28,
+    "golub" : 24
 }
 
 proc_per_node_map = {
     "hpcadv" : 2,
     "iforge" : 2,
     "cori" : 2,
-    "bridges" : 2
+    "bridges" : 2,
+    "golub" : 2
 }
 
 launcher_map = {
     "hpcadv" : "charmrun",
     "iforge" : "charmrun",
     "cori" : "srun",
-    "bridges" : "mpirun"
+    "bridges" : "mpirun",
+    "golub" : "charmrun",
 }
 
 jobscheds = {
     "hpcadv" : "slurm",
     "iforge" : "pbs",
     "cori" : "slurm",
-    "bridges" : "slurm"
+    "bridges" : "slurm",
+    "golub" : "pbs"
+
 }
 
 exampleDir = "/benchmarks/charm++/zerocopy/"
