@@ -45,6 +45,10 @@ basebuilds = {
     "golub" : ["ucx","verbs", "mpi"]
 }
 
+buildbasedirs = {
+"hpcadv" : ["/global/home/users/nitinb/ucx-1.6.1/build", "/global/home/users/nitinb/openmpi-4.0.1/build"]
+}
+
 archmap = {
     "hpcadv" : "-linux-x86_64",
     "iforge" : "-linux-x86_64",
