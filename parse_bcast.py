@@ -28,9 +28,8 @@ myArchOpt = ""
 smp_index=0
 for archopt_str in archopts_str:
   for basebuild in basebuilds[key]:
-    if(myBaseBuild == basebuild and myArchOpt == archopt_str):
+    #if(myBaseBuild == basebuild and myArchOpt == archopt_str):
       print "Basebuild:" + basebuild + "    Archopt:" + archopt_str
-      print "======================================================="
 
       num_nodes=1
       database = []
@@ -45,14 +44,25 @@ for archopt_str in archopts_str:
 
         num_nodes = num_nodes*2
       print "All data elems added and size is " + str(len(database))
-    print "======================================================="
+      row_index = 0
+      row_max = 21
+      while(row_index <= row_max):
+        node_index = 0
+        #print "======================================================="
+        #print "===========" + basebuild +"-" + archopts[smp_index] + "=========="
+        for data in database:
+          num_nodes = 2**node_index;
+          myRow = data[row_index]
+          print basebuild + "," + archopts[smp_index] + "," + str(num_nodes) + "," + str((ppn * num_nodes)) + "," + str(myRow[0]) + "," + str(myRow[1]) + "," + str(myRow[2]) + "," + str(myRow[3]) + "," + str(myRow[4]) + "," + str(myRow[1]/myRow[2]) + "," + str(myRow[3]/myRow[4])
+          node_index += 1
+        #print "======================================================="
+        row_index += 1
   smp_index = smp_index + 1;
 
-msg_size = 1048576
-row_index = 15
-node_index = 0
-for data in database:
-  num_nodes = 2**node_index;
-  myRow = data[row_index]
-  print str(num_nodes) + "," + str((ppn * num_nodes)) + "," + str(myRow[1]) + "," + str(myRow[2]) + "," + str(myRow[3]) + "," + str(myRow[4])
-  node_index += 1
+#def printResultLine(int row_index)
+#node_index = 0
+#for data in database:
+#  num_nodes = 2**node_index;
+#  myRow = data[row_index]
+#  print str(num_nodes) + "," + str((ppn * num_nodes)) + "," + str(myRow[0]) + "," + str(myRow[1]) + "," + str(myRow[2]) + "," + str(myRow[3]) + "," + str(myRow[4])
+#  node_index += 1
