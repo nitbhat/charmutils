@@ -1,5 +1,5 @@
 #PBS -l walltime=00:10:00
-#PBS -l nodes=2:ppn=1
+#PBS -l nodes=1:ppn=2
 #PBS -N p2p_pingpong
 #PBS -q secondary
 #PBS -j oe
@@ -8,17 +8,23 @@ module load mvapich2/2.3rc2-gcc-7.2.0
 
 module list
 
+
+cd /home/nbhat4/scratch/charm/ucx-linux-x86_64-prod/benchmarks/charm++/zerocopy/p2pPingpong
+
+make clean all
+./charmrun +p2 ./megaZCPingpong >> /home/nbhat4/scratch/charmutils/results/golub/p2p/p2p_pingpong_nonsmp_new_ucx_1
+
 # Change to the directory from which the batch job was submitted
-cd /home/nbhat4/scratch/charm/verbs-linux-x86_64-prod/examples/charm++/zerocopy/benchmarks/p2pPingpong
+cd /home/nbhat4/scratch/charm/verbs-linux-x86_64-prod/benchmarks/charm++/zerocopy/p2pPingpong
 
 make clean all
 
 # Run the MPI code
 #./charmrun +p2 ./megaZCPingpong 16 524288 1000 100 0 ++mpiexec > /home/nbhat4/scratch/results/p2p_pingpong_nonsmp_new
 #./charmrun +p2 ./megaZCPingpong 1048576 33554432 1000 100 0 ++mpiexec >> /home/nbhat4/scratch/results/p2p_pingpong_nonsmp_new
-./charmrun +p2 ./megaZCPingpong ++mpiexec >> /home/nbhat4/scratch/results/p2p_pingpong_nonsmp_new_ofi_1
+./charmrun +p2 ./megaZCPingpong ++mpiexec >> /home/nbhat4/scratch/charmutils/results/golub/p2p/p2p_pingpong_nonsmp_new_ofi_1
 
 
-cd /home/nbhat4/scratch/charm/mpi-linux-x86_64-prod/examples/charm++/zerocopy/benchmarks/p2pPingpong
+cd /home/nbhat4/scratch/charm/mpi-linux-x86_64-prod/benchmarks/charm++/zerocopy/p2pPingpong
 make clean all
-./charmrun +p2 ./megaZCPingpong >> /home/nbhat4/scratch/results/p2p_pingpong_nonsmp_new_mpi_1
+./charmrun +p2 ./megaZCPingpong >> /home/nbhat4/scratch/charmutils/results/golub/p2p/p2p_pingpong_nonsmp_new_mpi_1

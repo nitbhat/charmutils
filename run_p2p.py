@@ -6,13 +6,17 @@ ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
 
-def getScriptBeg(num_nodes, mins, jobname):
+def getScriptBeg(num_nodes, mins, jobname, smp_index):
   if(jobscheds[key] == "pbs"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#PBS -N " + jobname + "\n";
     scriptbeg += "#PBS -l walltime=00:" + str(mins) + ":00\n";
-    scriptbeg += "#PBS -l nodes=" + str(num_nodes) + ":ppn=24\n";
-  elif(jobscheds[key] == "slurm" and key=="edison"):
+    scriptbeg += "#PBS -l nodes=" + str(num_nodes) + ":ppn=";
+    scriptbeg += str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index], "p2p")) + "\n";
+    if(key == "golub"):
+      scriptbeg += "#PBS -q secondary\n";
+      scriptbeg += "#PBS -j oe\n";
+  elif(jobscheds[key] == "slurm" and key=="cori"):
     scriptbeg = "#!/bin/bash -l\n";
     scriptbeg += "#SBATCH -q regular\n";
     scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
@@ -39,6 +43,9 @@ def getScriptEnd(num_nodes,proc_per_node, mode):
     fileContents += "#SBATCH --ntasks-per-node="+tasks_per_node+"\n";
   elif(key == "iforge"):
     fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
+  elif(key == "golub"):
+    fileContents += "module unload mvapich2/2.3-intel-18.0\n";
+    fileContents += "module load mvapich2/2.3rc2-gcc-7.2.0 \n";
   return fileContents;
 
 def getSmpType(basebuild):
@@ -89,6 +96,18 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild):
     print "postargs is " + str(postargs)
     runComm += postargs + space
     runComm += postpostargs + " > " + outputFile
+  elif(key == "golub"):
+    if basebuild == 'verbs':
+      runComm += charmRunDir + space + "+p" + pval + space
+      runComm += execPath + space + args + space
+
+      print "mode is " + str(archopts[smp_index])
+      print "postargs is " + str(postargs)
+      runComm += postargs + space
+      runComm += postpostargs + " > " + outputFile
+    else:
+      runComm += "mpirun" + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+
   return runComm
 
 
@@ -127,13 +146,15 @@ def getPostPostArgs(basebuild, mode, append):
         return "++nodelist ~/nodelist" + append + ".smp"
       else:
         return "++nodelist ~/nodelist" + append
+  elif key == 'golub' and basebuild == 'verbs':
+    return "++mpiexec "
   return ""
 
 while num_nodes <= max_nodes:
   smp_index=0
   for archopt_str in archopts_str:
     scriptname = "reg_p2p_test_" + str(num_nodes) + "_" + archopts[smp_index];
-    fileContents = getScriptBeg(num_nodes, 30, scriptname);
+    fileContents = getScriptBeg(num_nodes, 30, scriptname, smp_index);
     fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
 
     for basebuild in basebuilds[key]:

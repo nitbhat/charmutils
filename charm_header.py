@@ -28,7 +28,7 @@ basedirs = {
     "cori" : "/global/homes/n/nbhat4/software/charm_2",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm",
-    "golub" : "/home/nbhat4/charm",
+    "golub" : "/home/nbhat4/scratch/charm",
     "frontera" : "/home1/03808/nbhat4/software/charm"
 }
 
@@ -37,7 +37,7 @@ charmutilsdirs = {
     "cori" : "/global/homes/n/nbhat4/software/charmutils",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils",
-    "golub" : "/home/nbhat4/charmutils",
+    "golub" : "/home/nbhat4/scratch/charmutils",
     "frontera" : "/home1/03808/nbhat4/software/charmutils"
 }
 

@@ -19,10 +19,10 @@ for basebuild in basebuilds[key]:
     buildStr = "./build" + space + target + space + basebuild + archmap[key]
     buildStr += space + archopt_str + space + buildTypeMap[buildType]
 
-    if(basebuild == "ucx"):
+    if(basebuild == "ucx" and key != "golub"):
       for buildbasedir in buildbasedirs[key]:
         buildStr += space + " --basedir=" + buildbasedir;
 
     buildStr +=  space + num_proc + buildTypeMap2[buildType]
     print buildStr
-    #os.system(buildStr)
+    os.system(buildStr)
