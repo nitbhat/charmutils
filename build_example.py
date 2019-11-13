@@ -6,7 +6,10 @@ basedir = basedirs[key]
 
 for basebuild in basebuilds[key]:
   for archopt_str in archopts_str1:
-    exampleFullDir = basedir + slash +  basebuild + archmap[key] + archopt_str + hyphen + suffix + exampleDir
+    exampleFullDir = basedir + slash +  basebuild + archmap[key]
+    if(key == "hpcadv" and basebuild == "ucx"):
+      exampleFullDir += "-ompipmix"
+    exampleFullDir += archopt_str + hyphen + suffix + exampleDir
     print exampleFullDir
     os.chdir(exampleFullDir)
     os.system("make clean")

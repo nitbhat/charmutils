@@ -17,6 +17,12 @@ print 'basebuild is' + str(basebuilds[key])
 for basebuild in basebuilds[key]:
   for archopt_str in archopts_str:
     buildStr = "./build" + space + target + space + basebuild + archmap[key]
-    buildStr += space + archopt_str + space + buildTypeMap[buildType] + space + num_proc + buildTypeMap2[buildType]
+    buildStr += space + archopt_str + space + buildTypeMap[buildType]
+
+    if(basebuild == "ucx"):
+      for buildbasedir in buildbasedirs[key]:
+        buildStr += space + " --basedir=" + buildbasedir;
+
+    buildStr +=  space + num_proc + buildTypeMap2[buildType]
     print buildStr
-    os.system(buildStr)
+    #os.system(buildStr)

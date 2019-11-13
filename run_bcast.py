@@ -1,7 +1,7 @@
 from charm_header import *
 
 num_nodes=1
-max_nodes=128
+max_nodes=32
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -65,7 +65,11 @@ def attachPath(bcastFullDir):
 def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
   runComm = ""
   basedir = basedirs[key]
-  exampleFullDir = basedir + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
+  exampleFullDir = basedir + slash +  basebuild + archmap[key]
+  if(key == "hpcadv" and basebuild == "ucx"):
+    exampleFullDir += "-ompipmix"
+  exampleFullDir += archopts_str1[smp_index] + hyphen + suffix + (hyphen if extraSuffix != "" else "") + extraSuffix + exampleDir
+  outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
 
   # run bcast
   bcastFullDir = exampleFullDir + slash + "bcastPingAll/";
@@ -80,8 +84,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
     postpostargs = getPostPostArgs(basebuild, archopts[smp_index], ".$PBS_JOBID")
   else:
     postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
-  outputFile = getOutputFile(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
-
+  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
 
   if(path.exists(outputFile)):
     print "file exists"

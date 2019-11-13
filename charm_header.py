@@ -38,11 +38,11 @@ charmutilsdirs = {
 }
 
 basebuilds = {
-    "hpcadv" : ["ucx","verbs","mpi"],
+    "hpcadv" : ["ucx","mpi","verbs"],
     "iforge" : ["verbs","mpi"],
     "cori" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"],
-    "golub" : ["ucx","verbs", "mpi"]
+    "golub" : ["ucx","mpi","verbs"]
 }
 
 buildbasedirs = {
@@ -91,7 +91,7 @@ jobscheds = {
 
 }
 
-exampleDir = "/benchmarks/charm++/zerocopy/"
+exampleDir = "/benchmarks/charm++/zerocopy"
 archopts=["nonsmp","smp"]
 archopts_str=["","smp"]
 archopts_str1=["","-smp"]
