@@ -16,6 +16,8 @@ elif(hostname_full.find('golub') != -1):
   key="golub"
 elif(hostname_full.find('hpcadv') != -1):
   key="hpcadv"
+elif(hostname_full.find('frontera') != -1):
+  key="frontera"
 else:
   key = 'iforge'
 
@@ -26,7 +28,8 @@ basedirs = {
     "cori" : "/global/homes/n/nbhat4/software/charm_2",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm",
-    "golub" : "/home/nbhat4/charm"
+    "golub" : "/home/nbhat4/charm",
+    "frontera" : "/home1/03808/nbhat4/software/charm"
 }
 
 charmutilsdirs = {
@@ -34,11 +37,13 @@ charmutilsdirs = {
     "cori" : "/global/homes/n/nbhat4/software/charmutils",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils",
-    "golub" : "/home/nbhat4/charmutils"
+    "golub" : "/home/nbhat4/charmutils",
+    "frontera" : "/home1/03808/nbhat4/software/charmutils"
 }
 
 basebuilds = {
     "hpcadv" : ["ucx","mpi","verbs"],
+    "frontera" : ["ucx","verbs","mpi"],
     "iforge" : ["verbs","mpi"],
     "cori" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"],
@@ -51,6 +56,7 @@ buildbasedirs = {
 
 archmap = {
     "hpcadv" : "-linux-x86_64",
+    "frontera" : "-linux-x86_64",
     "iforge" : "-linux-x86_64",
     "cori" : "-crayxc",
     "bridges" : "-linux-x86_64",
@@ -59,6 +65,7 @@ archmap = {
 
 ppnmap = {
     "hpcadv" : 32,
+    "frontera" : 56,
     "iforge" : 24,
     "cori" : 24,
     "edison" : 24,
@@ -68,6 +75,7 @@ ppnmap = {
 
 proc_per_node_map = {
     "hpcadv" : 2,
+    "frontera" : 2,
     "iforge" : 2,
     "cori" : 2,
     "bridges" : 2,
