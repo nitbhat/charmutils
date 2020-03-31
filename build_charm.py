@@ -19,7 +19,7 @@ for basebuild in basebuilds[key]:
     buildStr = "./build" + space + target + space + basebuild + archmap[key]
     buildStr += space + archopt_str + space + buildTypeMap[buildType]
 
-    if(basebuild == "ucx" and key != "golub"):
+    if(basebuild == "ucx" and key == "hpcadv"):
       for buildbasedir in buildbasedirs[key]:
         buildStr += space + " --basedir=" + buildbasedir;
 

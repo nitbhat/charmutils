@@ -29,7 +29,7 @@ basedirs = {
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm",
     "golub" : "/home/nbhat4/scratch/charm",
-    "frontera" : "/home1/03808/nbhat4/software/charm"
+    "frontera" : "/work/03808/nbhat4/frontera/charm"
 }
 
 charmutilsdirs = {
@@ -38,12 +38,12 @@ charmutilsdirs = {
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils",
     "golub" : "/home/nbhat4/scratch/charmutils",
-    "frontera" : "/home1/03808/nbhat4/software/charmutils"
+    "frontera" : "/work/03808/nbhat4/frontera/charmutils"
 }
 
 basebuilds = {
     "hpcadv" : ["ucx","mpi","verbs"],
-    "frontera" : ["ucx","verbs","mpi"],
+    "frontera" : ["ucx","mpi"],
     "iforge" : ["verbs","mpi"],
     "cori" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"],
@@ -99,6 +99,44 @@ jobscheds = {
 
 }
 
+preBuildEnv = {
+  "ucx" : "module load impi/19.0.5",
+  "impi" : "module load impi/19.0.5",
+  "mpich" : "export PATH=/work/03808/nbhat4/frontera/mpich-3.3.2/build/bin:$PATH && export LD_LIBRARY_PATH=/work/03808/nbhat4/frontera/mpich-3.3.2/build/lib:$LD_LIBRARY_PATH",
+  "mpichnoucx" : "export PATH=/work/03808/nbhat4/frontera/mpich-3.3.2/build_noucx/bin:$PATH && export LD_LIBRARY_PATH=/work/03808/nbhat4/frontera/mpich-3.3.2/build_noucx/lib:$LD_LIBRARY_PATH",
+  "ompi" : "export PATH=/work/03808/nbhat4/frontera/ompi/build/bin:$PATH && export LD_LIBRARY_PATH=/work/03808/nbhat4/frontera/ompi/build/lib:$LD_LIBRARY_PATH",
+  "ompinoucx" : "export PATH=/work/03808/nbhat4/frontera/ompi/build_noucx/bin:$PATH && export LD_LIBRARY_PATH=/work/03808/nbhat4/frontera/ompi/build_noucx/lib:$LD_LIBRARY_PATH",
+  "ucxompi" : "export PATH=/work/03808/nbhat4/frontera/ompi/build/bin:$PATH && export LD_LIBRARY_PATH=/work/03808/nbhat4/frontera/ompi/build/lib:$LD_LIBRARY_PATH"
+  #"mpich" : "/work/03808/nbhat4/frontera/mpich-3.3.2/build/bin:$PATH",
+  #"mpichnoucx" : "/work/03808/nbhat4/frontera/mpich-3.3.2/build_noucx/bin:$PATH",
+  #"ompi" : "/work/03808/nbhat4/frontera/ompi/build/bin:$PATH",
+  #"ompinoucx" : "/work/03808/nbhat4/frontera/ompi/build_noucx/bin:$PATH",
+  #"ucxompi" : "/work/03808/nbhat4/frontera/ompi/build/bin:$PATH"
+
+}
+
+frontera_basedir = {
+  "ucx" : "/work/03808/nbhat4/frontera/ucx/build_1.6.1",
+  "impi" : "$TACC_IMPI_DIR/intel64/",
+  "mpich" : "/work/03808/nbhat4/frontera/mpich-3.3.2/build",
+  "mpichnoucx" : "/work/03808/nbhat4/frontera/mpich-3.3.2/build_noucx",
+  "ompi" : "/work/03808/nbhat4/frontera/ompi/build",
+  "ompinoucx" : "/work/03808/nbhat4/frontera/ompi/build_noucx",
+  "ucxompi" : "/work/03808/nbhat4/frontera/ompi/build"
+}
+
+frontera_basebuilds = {
+  "ucx" : "ucx",
+  "impi" : "mpi",
+  "mpich" : "mpi",
+  "mpichnoucx" : "mpi",
+  "ompi" : "mpi",
+  "ompinoucx" : "mpi",
+  "ucxompi" : "ucx"
+}
+
+
+
 exampleDir = "/benchmarks/charm++/zerocopy"
 archopts=["nonsmp","smp"]
 archopts_str=["","smp"]
@@ -106,12 +144,14 @@ archopts_str1=["","-smp"]
 
 buildTypeMap = {
     "prod" : "--with-production --enable-error-checking --suffix=prod",
-    "debug" : "--enable-error-checking --suffix=debug"
+    "debug" : "--enable-error-checking --suffix=debug",
+    "debug2" : "--enable-error-checking --suffix=debug2 "
 }
 
 buildTypeMap2 = {
     "prod" : "",
-    "debug" : " -g -O0 "
+    "debug" : " -g ",
+    "debug2" : " -g -O0 "
 }
 
 skipHeaderLineMap = {
@@ -131,8 +171,8 @@ smpSkipLinesModifierMap = {
 hyphen="-"
 slash="/"
 space=" "
-#target="charm++"
-target="ChaNGa"
+target="charm++"
+#target="ChaNGa"
 suffix="prod"
 #basearch = basebuild+"-linux-x86_64"
 options = " --with-production --enable-error-checking --suffix="+suffix
