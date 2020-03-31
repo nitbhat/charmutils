@@ -67,7 +67,8 @@ basebuilds = {
     "cori" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"],
     "golub" : ["ucx","mpi","verbs"],
-    "macbook" : ["netlrts","mpi"]
+    "macbook" : ["netlrts","mpi"],
+    "courage" : ["netlrts","mpi"]
 }
 
 buildbasedirs = {
@@ -81,7 +82,8 @@ archmap = {
     "cori" : "-crayxc",
     "bridges" : "-linux-x86_64",
     "golub" : "-linux-x86_64",
-    "macbook": "-darwin-x86_64"
+    "macbook": "-darwin-x86_64",
+    "courage" : "-linux-x86_64"
 }
 
 ppnmap = {

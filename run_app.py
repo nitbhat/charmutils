@@ -53,7 +53,7 @@ for basebuild in basebuilds[key]:
 
     outputFinal = outputDir + latest
     tarFile = key + "_" + basebuild + "_" + mode+ ".tar.gz"
-    tarCommand = "tar -czvf " + tarFile + " " + outputFinal
+    tarCommand = "tar -czvf " + tarFile + " " + latest
 
 
     #print archStr
@@ -66,6 +66,6 @@ for basebuild in basebuilds[key]:
 
     print("Current directory is " + currentDir)
 
-    compareCommand = appdirs[key] + "/scripts/evaluateOutput.sh " + outputDir + tarFile + " " + simType
+    compareCommand = appdirs[key] + "/scripts/evaluateOutput.sh " + outputDir + tarFile + " " + simType + " " + str(appdirs[key])
     print (compareCommand)
     os.system(compareCommand)
