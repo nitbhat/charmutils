@@ -18,6 +18,10 @@ elif(hostname_full.find('hpcadv') != -1):
   key="hpcadv"
 elif(hostname_full.find('frontera') != -1):
   key="frontera"
+elif(hostname_full.find('courage') != -1):
+  key="courage"
+elif(hostname_full.find('Macbook') != -1):
+  key="macbook"
 else:
   key = 'iforge'
 
@@ -29,7 +33,9 @@ basedirs = {
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm",
     "golub" : "/home/nbhat4/scratch/charm",
-    "frontera" : "/work/03808/nbhat4/frontera/charm"
+    "frontera" : "/scratch1/03808/nbhat4/charm",
+    "courage" : "/scratch/nitin/charm_1",
+    "macbook" : "/Users/nitinbhat/Work/software/charm"
 }
 
 charmutilsdirs = {
@@ -38,7 +44,20 @@ charmutilsdirs = {
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils",
     "golub" : "/home/nbhat4/scratch/charmutils",
-    "frontera" : "/work/03808/nbhat4/frontera/charmutils"
+    "frontera" : "/work/03808/nbhat4/frontera/charmutils",
+    "courage" : "/scratch/nitin/charmutils",
+    "macbook" : "/Users/nitinbhat/Work/software/charmutils"
+}
+
+appdirs = {
+    "iforge" : "",
+    "cori" : "/project/projectdirs/m2609/nitin/particleExercise",
+    "bridges" : "/pylon5/ac7k4vp/nbhat4/particleExercise",
+    "hpcadv" : "",
+    "golub" : "/home/nbhat4/scratch/charmutils",
+    "courage" : "/scratch/nitin/particleExercise",
+    "macbook" : "/Users/nitinbhat/Work/software/particleSimulation",
+    "frontera" : "/scratch1/03808/nbhat4/particleExercise"
 }
 
 basebuilds = {
@@ -179,6 +198,7 @@ options = " --with-production --enable-error-checking --suffix="+suffix
 build_proc=16
 num_proc = " -j"+str(build_proc) + " "
 debug_opts=""
+
 
 
 ##buildmodes = ["smp","nonsmp"]
