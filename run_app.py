@@ -12,15 +12,15 @@ from charm_header import *
 # Now change the directory
 #os.chdir(basedirs[key]);
 
-import glob
 
 
-print "application directory is " + appdirs[key]
+print ("key is " + str(key))
 os.chdir(appdirs[key])
 suffix="prod"
 
+print ("app dir is" + str(appdirs[key]))
 
-#print 'basebuild is' + str(basebuilds[key])
+print ('basebuild is' + str(basebuilds[key]))
 
 for basebuild in basebuilds[key]:
   for archopt_str in archopts_str:
@@ -35,29 +35,35 @@ for basebuild in basebuilds[key]:
     charmHome = archStr
     buildStr = "make clean test CHARM_HOME=" + charmHome
 
-    outputDir = appdirs[key] + "/output"
 
-    print outputDir
 
+    print (buildStr)
+    os.system(buildStr)
+
+    outputDir = appdirs[key] + "/output/"
+    print (outputDir)
     os.chdir(outputDir)
     dirs = [d for d in os.listdir('.') if os.path.isdir(d)]
-    print "dirs is " + str(dirs)
+    print ("dirs is " + str(dirs))
     latest = sorted(dirs, key=lambda x: os.path.getctime(x), reverse=True)[0]
     #l_subdirs = [d for d in os.listdir(outputDir) if os.path.isdir(d)]
     #latest_subdir = max(all_subdirs, key=os.path.getmtime)
 
-    outputDir += latest
+    outputFinal = outputDir + latest
     tarFile = key + "_" + basebuild + "_" + mode+ ".tar.gz"
-    tarCommand = "tar -czvf " + tarFile + " " + outputDir
+    tarCommand = "tar -czvf " + tarFile + " " + outputFinal
 
 
     #print archStr
-    print buildStr
-    os.system(buildStr)
-    print latest
-    print tarCommand
+    print (latest)
+    print (tarCommand)
     os.system(tarCommand)
     os.chdir(appdirs[key])
 
-    compareCommand = "./scripts/evaluateOutput.sh " + tarFile
-    print compareCommand
+    currentDir = os.getcwd()
+
+    print("Current directory is " + currentDir)
+
+    compareCommand = appdirs[key] + "/scripts/evaluateOutput.sh " + outputDir + tarFile
+    print (compareCommand)
+    os.system(compareCommand)

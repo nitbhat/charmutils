@@ -4,9 +4,9 @@ from os import path
 import socket
 
 hostname_full = socket.gethostname();
-#os.system('hostname')
+os.system('hostname')
 
-print hostname_full
+print ("host name is " +hostname_full)
 
 if(hostname_full.find('bridges') != -1):
   key='bridges'
@@ -20,7 +20,7 @@ elif(hostname_full.find('frontera') != -1):
   key="frontera"
 elif(hostname_full.find('courage') != -1):
   key="courage"
-elif(hostname_full.find('Macbook') != -1):
+elif(hostname_full.find('MacBook') != -1):
   key="macbook"
 else:
   key = 'iforge'
@@ -66,7 +66,8 @@ basebuilds = {
     "iforge" : ["verbs","mpi"],
     "cori" : ["mpi","gni"],
     "bridges" : ["mpi","ofi"],
-    "golub" : ["ucx","mpi","verbs"]
+    "golub" : ["ucx","mpi","verbs"],
+    "macbook" : ["netlrts","mpi"]
 }
 
 buildbasedirs = {
@@ -79,7 +80,8 @@ archmap = {
     "iforge" : "-linux-x86_64",
     "cori" : "-crayxc",
     "bridges" : "-linux-x86_64",
-    "golub" : "-linux-x86_64"
+    "golub" : "-linux-x86_64",
+    "macbook": "-darwin-x86_64"
 }
 
 ppnmap = {
