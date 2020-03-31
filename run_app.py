@@ -18,6 +18,8 @@ print ("key is " + str(key))
 os.chdir(appdirs[key])
 suffix="prod"
 
+simType="simple"
+
 print ("app dir is" + str(appdirs[key]))
 
 print ('basebuild is' + str(basebuilds[key]))
@@ -64,6 +66,6 @@ for basebuild in basebuilds[key]:
 
     print("Current directory is " + currentDir)
 
-    compareCommand = appdirs[key] + "/scripts/evaluateOutput.sh " + outputDir + tarFile
+    compareCommand = appdirs[key] + "/scripts/evaluateOutput.sh " + outputDir + tarFile + " " + simType
     print (compareCommand)
     os.system(compareCommand)
