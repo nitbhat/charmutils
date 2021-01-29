@@ -25,11 +25,12 @@ elif(hostname_full.find('MacBook') != -1):
 else:
   key = 'iforge'
 
+key = 'cori'
 buildType = 'prod'
 
 basedirs = {
     "iforge" : "/ui/cwi/nitin/software/charm",
-    "cori" : "/global/homes/n/nbhat4/software/charm_2",
+    "cori" : "/project/projectdirs/m2609/nitin/charm",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charm",
     "hpcadv" : "/global/home/users/nitinb/charm",
     "golub" : "/home/nbhat4/scratch/charm",
@@ -40,7 +41,7 @@ basedirs = {
 
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
-    "cori" : "/global/homes/n/nbhat4/software/charmutils",
+    "cori" : "/project/projectdirs/m2609/nitin/charmutils",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils",
     "golub" : "/home/nbhat4/scratch/charmutils",
@@ -90,7 +91,7 @@ ppnmap = {
     "hpcadv" : 32,
     "frontera" : 56,
     "iforge" : 24,
-    "cori" : 24,
+    "cori" : 32,
     "edison" : 24,
     "bridges" : 28,
     "golub" : 24
