@@ -1,22 +1,33 @@
 from charm_header import *
 
-num_nodes=32
-max_nodes=32
+num_nodes=64
+max_nodes=64
+#max_nodes=1
 
-proj=True
+#proj=True
+proj=False
+
+stats=False
+#stats=True
+
+exam2mdir=exam2mdirs[key]
 
 while num_nodes <= max_nodes:
   #voxLens = [0.008, 0.01, 0.05]
   #voxLens = [0.025, 0.075]
   voxLens = [0.01, 0.025, 0.05, 0.075]
+  #voxLens = [0.01, 0.025, 0.075]
+  #voxLens = [0.05]
   for vox in voxLens:
 
     voxLen = str(vox)
 
-    scriptDir = "/global/cscratch1/sd/nbhat4/ExaM2M/scripts/generatedScripts/"
+    scriptDir = exam2mdir + "/scripts/generatedScripts/"
 
     scriptname = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
 
+    if(stats):
+      scriptname += "_stats"
 
     if(proj):
       scriptname += "_proj"

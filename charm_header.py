@@ -25,7 +25,6 @@ elif(hostname_full.find('MacBook') != -1):
 else:
   key = 'iforge'
 
-key = 'cori'
 buildType = 'prod'
 
 basedirs = {
@@ -60,6 +59,15 @@ appdirs = {
     "macbook" : "/Users/nitinbhat/Work/software/particleSimulation",
     "frontera" : "/scratch1/03808/nbhat4/particleExercise"
 }
+
+exam2mdirs = {
+    "cori" : "/global/cscratch1/sd/nbhat4/ExaM2M/",
+    "frontera" : "/scratch1/03808/nbhat4/ExaM2M/"
+}
+
+
+
+
 
 basebuilds = {
     "hpcadv" : ["ucx","mpi","verbs"],
@@ -119,8 +127,8 @@ jobscheds = {
     "iforge" : "pbs",
     "cori" : "slurm",
     "bridges" : "slurm",
-    "golub" : "pbs"
-
+    "golub" : "pbs",
+    "frontera" : "slurm",
 }
 
 preBuildEnv = {

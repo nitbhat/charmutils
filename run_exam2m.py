@@ -1,14 +1,17 @@
 from charm_header import *
 
-num_nodes=1
+num_nodes=64
 max_nodes=64
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
-proj=True
+proj=False
+stats=False
 
 print "key is " + key
 print " basedir is " + basedirs[key]
+
+exam2mdir=exam2mdirs[key]
 
 
 def getScriptBeg(num_nodes, mins, jobname, outputName):
@@ -24,6 +27,13 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
     scriptbeg += "#SBATCH --output="+ outputName + "\n";
     scriptbeg += "#SBATCH --constraint=haswell" + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+  elif(jobscheds[key] == "slurm" and key=="frontera"):
+    scriptbeg = "#!/bin/bash -l\n";
+    scriptbeg += "#SBATCH -p normal\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
     scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
   elif(jobscheds[key] == "slurm" and key=="bridges"):
     scriptbeg = "#!/bin/bash\n";
@@ -69,24 +79,26 @@ def attachPath(bcastFullDir):
 def getRunCommand(num_nodes, voxLen):
 
   runComm = ""
-  execDir = "/global/cscratch1/sd/nbhat4/ExaM2M/build"
+  execDir = exam2mdir + "/build"
 
   if(proj):
     execDir += "-proj"
 
   execDir += "/Main/"
 
-  outputDir = "/global/cscratch1/sd/nbhat4/ExaM2M/outputFiles/projResults/";
+  outputDir = exam2mdir + "/outputFiles/projResults/";
   traceroot = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen + "_projdir";
 
   execName = "exam2m ";
-  args = "/global/cscratch1/sd/nbhat4/ExaM2M/inputFiles/sphere_full_48M.exo /global/cscratch1/sd/nbhat4/ExaM2M/inputFiles/unitcube_48M.exo " + voxLen + " "
-  #postargs = "+printTetStats +printVoxCount"
+  args = exam2mdir + "/inputFiles/sphere_full_48M.exo " + exam2mdir + "/inputFiles/unitcube_48M.exo " + voxLen + " "
+  #args = exam2mdir + "/inputFiles/sphere_full_48M.exo " + exam2mdir + "/inputFiles/unitcube_48M.exo "
+
   postargs = ""
+  if(stats):
+    postargs += "+printTetStats +printVoxCount"
 
   if(proj):
     postargs += " +traceroot " + outputDir + traceroot
-
 
   postpostargs = ""
 
@@ -99,7 +111,8 @@ def getRunCommand(num_nodes, voxLen):
   nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
   cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
 
-  runComm += "srun -n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
+  #runComm += "srun -n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
+  runComm += "mpirun -n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
   return runComm
 
 
@@ -191,10 +204,16 @@ def getPostPostArgs(basebuild, mode, append):
 
 while num_nodes <= max_nodes:
   voxLens = [0.01, 0.025, 0.05, 0.075]
+  #voxLens = [0.01, 0.025, 0.075]
+  #voxLens = [0.05]
   for vox in voxLens:
     voxLen = str(vox)
     smp_index=0
     scriptname = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
+
+    if(stats):
+      scriptname += "_stats"
+
     folderName = "newResults"
 
     if(proj):
@@ -204,31 +223,35 @@ while num_nodes <= max_nodes:
     scriptname += "_script";
 
 
-    outputDir = "/global/cscratch1/sd/nbhat4/ExaM2M/outputFiles/" + folderName + "/"
+    outputDir = exam2mdir + "/outputFiles/" + folderName + "/"
 
 
     outputName = outputDir + "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
+
+    if(stats):
+      outputName += "_stats"
+
 
     if(proj):
        outputName += "_proj"
 
     outputName += "_result_%j.out";
 
-    fileContents = getScriptBeg(num_nodes, 5, scriptname, outputName);
+    fileContents = getScriptBeg(num_nodes, 1, scriptname, outputName);
     fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[0]);
 
-    fileContents += "export LD_LIBRARY_PATH=/global/cscratch1/sd/nbhat4/ExaM2M/external/build/mpi-nonsmp"
+    fileContents += "export LD_LIBRARY_PATH=" + exam2mdir + "/external/build/mpi-nonsmp"
 
     if(proj):
       fileContents += "-proj"
 
     fileContents += "/tpls/lib:$LD_LIBRARY_PATH" + "\n";
 
-    fileContents += "cd /global/cscratch1/sd/nbhat4/ExaM2M/build"
+    fileContents += "cd " + exam2mdir + "/build"
 
     if(proj):
       fileContents += "-proj" + "\n"
-      outputDir = "/global/cscratch1/sd/nbhat4/ExaM2M/outputFiles/projResults/";
+      outputDir = exam2mdir + "/outputFiles/projResults/";
       traceroot = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen + "_projdir" + "\n"
       fileContents += "mkdir " + outputDir + traceroot + "\n";
 
@@ -238,7 +261,7 @@ while num_nodes <= max_nodes:
 
 
 
-    scriptDir = "/global/cscratch1/sd/nbhat4/ExaM2M/scripts/generatedScripts/"
+    scriptDir = exam2mdir + "/scripts/generatedScripts/"
     extraSuffix= ""
     runComm = getRunCommand(num_nodes, voxLen);
 
