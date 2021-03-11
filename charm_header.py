@@ -61,8 +61,8 @@ appdirs = {
 }
 
 exam2mdirs = {
-    "cori" : "/global/cscratch1/sd/nbhat4/ExaM2M/",
-    "frontera" : "/scratch1/03808/nbhat4/ExaM2M/"
+    "cori" : "/global/cscratch1/sd/nbhat4/ExaM2M",
+    "frontera" : "/scratch1/03808/nbhat4/ExaM2M"
 }
 
 

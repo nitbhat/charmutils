@@ -1,17 +1,21 @@
 from charm_header import *
 
-num_nodes=64
-max_nodes=64
+num_nodes=1
+max_nodes=2
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
 proj=False
 stats=False
+prev=False
 
 print "key is " + key
 print " basedir is " + basedirs[key]
 
 exam2mdir=exam2mdirs[key]
+
+if(prev):
+  exam2mdir += "_prev"
 
 
 def getScriptBeg(num_nodes, mins, jobname, outputName):
@@ -86,12 +90,12 @@ def getRunCommand(num_nodes, voxLen):
 
   execDir += "/Main/"
 
-  outputDir = exam2mdir + "/outputFiles/projResults/";
+  outputDir = exam2mdir + "/../exam2mOutputFiles/projResults/";
   traceroot = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen + "_projdir";
 
   execName = "exam2m ";
-  args = exam2mdir + "/inputFiles/sphere_full_48M.exo " + exam2mdir + "/inputFiles/unitcube_48M.exo " + voxLen + " "
-  #args = exam2mdir + "/inputFiles/sphere_full_48M.exo " + exam2mdir + "/inputFiles/unitcube_48M.exo "
+  args = exam2mdir + "/../exam2mInputFiles/sphere_full_48M.exo " + exam2mdir + "/../exam2mInputFiles/unitcube_48M.exo " + voxLen + " "
+  #args = exam2mdir + "/../exam2mInputFiles/sphere_full_48M.exo " + exam2mdir + "/../exam2mInputFiles/unitcube_48M.exo "
 
   postargs = ""
   if(stats):
@@ -211,6 +215,9 @@ while num_nodes <= max_nodes:
     smp_index=0
     scriptname = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
 
+    if(prev):
+      scriptname += "_prev"
+
     if(stats):
       scriptname += "_stats"
 
@@ -223,21 +230,21 @@ while num_nodes <= max_nodes:
     scriptname += "_script";
 
 
-    outputDir = exam2mdir + "/outputFiles/" + folderName + "/"
+    outputDir = exam2mdir + "/../exam2mOutputFiles/" + folderName + "/"
 
 
     outputName = outputDir + "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
 
+    if(prev):
+      outputName += "_prev"
     if(stats):
       outputName += "_stats"
-
-
     if(proj):
        outputName += "_proj"
 
     outputName += "_result_%j.out";
 
-    fileContents = getScriptBeg(num_nodes, 1, scriptname, outputName);
+    fileContents = getScriptBeg(num_nodes, 10, scriptname, outputName);
     fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[0]);
 
     fileContents += "export LD_LIBRARY_PATH=" + exam2mdir + "/external/build/mpi-nonsmp"
@@ -251,7 +258,7 @@ while num_nodes <= max_nodes:
 
     if(proj):
       fileContents += "-proj" + "\n"
-      outputDir = exam2mdir + "/outputFiles/projResults/";
+      outputDir = exam2mdir + "/../exam2mOutputFiles/projResults/";
       traceroot = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen + "_projdir" + "\n"
       fileContents += "mkdir " + outputDir + traceroot + "\n";
 
