@@ -1,13 +1,14 @@
 from charm_header import *
 
-num_nodes=1
-max_nodes=2
+num_nodes=32
+max_nodes=64
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
-proj=False
+proj=True
 stats=False
 prev=False
+debug=False
 
 print "key is " + key
 print " basedir is " + basedirs[key]
@@ -16,6 +17,14 @@ exam2mdir=exam2mdirs[key]
 
 if(prev):
   exam2mdir += "_prev"
+
+buildName = "build"
+if(debug):
+  buildName += "_debug"
+if(proj):
+  buildName += "_proj"
+
+
 
 
 def getScriptBeg(num_nodes, mins, jobname, outputName):
@@ -83,10 +92,7 @@ def attachPath(bcastFullDir):
 def getRunCommand(num_nodes, voxLen):
 
   runComm = ""
-  execDir = exam2mdir + "/build"
-
-  if(proj):
-    execDir += "-proj"
+  execDir = exam2mdir + "/" + buildName
 
   execDir += "/Main/"
 
@@ -115,8 +121,8 @@ def getRunCommand(num_nodes, voxLen):
   nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
   cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
 
-  #runComm += "srun -n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
-  runComm += "mpirun -n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
+  runComm += "srun -n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
+  #runComm += "mpirun -n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
   return runComm
 
 
@@ -215,6 +221,9 @@ while num_nodes <= max_nodes:
     smp_index=0
     scriptname = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
 
+    if(debug):
+      scriptname += "_debug"
+
     if(prev):
       scriptname += "_prev"
 
@@ -235,6 +244,8 @@ while num_nodes <= max_nodes:
 
     outputName = outputDir + "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
 
+    if(debug):
+      outputName += "_debug"
     if(prev):
       outputName += "_prev"
     if(stats):
@@ -244,20 +255,20 @@ while num_nodes <= max_nodes:
 
     outputName += "_result_%j.out";
 
-    fileContents = getScriptBeg(num_nodes, 10, scriptname, outputName);
+    fileContents = getScriptBeg(num_nodes, 5, scriptname, outputName);
     fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[0]);
 
-    fileContents += "export LD_LIBRARY_PATH=" + exam2mdir + "/external/build/mpi-nonsmp"
+    fileContents += "export LD_LIBRARY_PATH=" + exam2mdir + "/external/" + buildName + "/mpi-nonsmp"
 
-    if(proj):
-      fileContents += "-proj"
+    #if(proj):
+    #  fileContents += "-proj"
 
     fileContents += "/tpls/lib:$LD_LIBRARY_PATH" + "\n";
 
-    fileContents += "cd " + exam2mdir + "/build"
+    fileContents += "cd " + exam2mdir + "/" + buildName + "\n"
 
     if(proj):
-      fileContents += "-proj" + "\n"
+      #fileContents += "-proj" + "\n"
       outputDir = exam2mdir + "/../exam2mOutputFiles/projResults/";
       traceroot = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen + "_projdir" + "\n"
       fileContents += "mkdir " + outputDir + traceroot + "\n";

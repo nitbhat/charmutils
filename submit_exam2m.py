@@ -1,7 +1,7 @@
 from charm_header import *
 
-num_nodes=1
-max_nodes=2
+num_nodes=2
+max_nodes=64
 #max_nodes=1
 
 #proj=True
@@ -13,6 +13,9 @@ stats=False
 prev=False
 #prev=True
 
+#debug=True
+debug=False
+
 exam2mdir=exam2mdirs[key]
 if(prev):
   exam2mdir += "_prev"
@@ -20,9 +23,10 @@ if(prev):
 while num_nodes <= max_nodes:
   #voxLens = [0.008, 0.01, 0.05]
   #voxLens = [0.025, 0.075]
-  voxLens = [0.01, 0.025, 0.05, 0.075]
+  #voxLens = [0.01, 0.025, 0.05, 0.075]
   #voxLens = [0.01, 0.025, 0.075]
-  #voxLens = [0.05]
+  voxLens = [0.05]
+  #voxLens = [0.075]
   for vox in voxLens:
 
     voxLen = str(vox)
@@ -31,10 +35,11 @@ while num_nodes <= max_nodes:
 
     scriptname = "exam2m_mpi_nonsmp_sphere_cube_" + str(num_nodes) + "_" + voxLen
 
+    if(debug):
+      scriptname += "_debug"
+
     if(prev):
       scriptname += "_prev"
-
-
 
     if(stats):
       scriptname += "_stats"
