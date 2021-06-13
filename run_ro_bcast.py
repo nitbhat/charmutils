@@ -6,7 +6,7 @@ ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
 
-def getScriptBeg(num_nodes, mins, jobname):
+def getScriptBeg(num_nodes, mins, jobname, outputName):
   if(jobscheds[key] == "pbs"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#PBS -N " + jobname + "\n";
@@ -17,6 +17,14 @@ def getScriptBeg(num_nodes, mins, jobname):
     scriptbeg += "#SBATCH -q regular\n";
     scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+  elif(jobscheds[key] == "slurm" and key=="cori"):
+    scriptbeg = "#!/bin/bash -l\n";
+    scriptbeg += "#SBATCH -q regular\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --constraint=haswell" + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
   elif(jobscheds[key] == "slurm" and key=="bridges"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -p RM\n";
@@ -50,32 +58,38 @@ def attachPath(bcastFullDir):
   else:
     return ""
 
-def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power):
+def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power, execName):
   exampleFullDir = basedirs[key] + slash +  basebuild + archmap[key] + archopts_str1[smp_index] + hyphen + suffix + exampleDir
-  outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "ro/";
-
   # run bcast
+
   roBcastFullDir = exampleFullDir + slash + "readonlyBcast/";
   charmRunDir  = attachPath(roBcastFullDir) + launcher_map[key];
-  execPath1    = roBcastFullDir + "/readonlyBcast ";
-  execPath2    = roBcastFullDir + "/readonlyZCBcast ";
+  execPath    = roBcastFullDir + "/" + execName;
+  #execPath1    = roBcastFullDir + "/readonlyBcast ";
+  #execPath2    = roBcastFullDir + "/readonlyZCBcast ";
   pval         = str(getPValue(num_nodes, proc_per_node, archopts[smp_index]))
   nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
   cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
   postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index], getSmpType(basebuild))
   postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
-  outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
 
-  if(key == "edison"):
-    runComm1 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4 and iteration == 1) else " >> ") + outputFile
-    runComm2 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
+  if(key == "cori"):
+    #print "args="+args
+    #print "postargs="+str(postargs)
+    #runComm1 = charmRunDir + space + "-n " + nval + space + " -c " + cval
+    #runComm1 += space + execPath1 + space
+    #runComm1 += args + space + postargs
+    #runComm1 += space + postpostargs
+    runComm1 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
+    #runComm2 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath2 + space + args + space + postargs + space + postpostargs
   elif(key == "bridges"):
     runComm1 = charmRunDir + space + "-n " + nval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4 and iteration == 1) else " >> ") + outputFile
     runComm2 = charmRunDir + space + "-n " + nval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
   elif(key == "iforge"):
     runComm1 = charmRunDir + space + "+p" + pval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4 and iteration == 1) else " >> ") + outputFile
     runComm2 = charmRunDir + space + "+p" + pval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
-  return runComm1 + "\n" + runComm2;
+  #return runComm1 + "\n" + runComm2;
+  return runComm1;
 
 def getPValue(num_nodes, proc_per_node, mode):
   if mode == "smp":
@@ -119,6 +133,7 @@ def getTasksPerNodeValue(num_nodes, proc_per_node, mode):
 
 
 def getPostArgs(num_nodes, proc_per_node, mode, smpType):
+  #print "mode="+mode
   if mode == "smp":
     if smpType== "regular":
       if num_nodes == 1:
@@ -128,6 +143,8 @@ def getPostArgs(num_nodes, proc_per_node, mode, smpType):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-10,12-22 +commap 11,23"
         elif(ppn == 28):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-12,14-26 +commap 13,27"
+        elif(ppn == 32):
+          return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-14,16-30 +commap 15,31"
     else:
       if mode == "smp":
         if num_nodes == 1:
@@ -161,22 +178,44 @@ while num_nodes <= max_nodes:
   smp_index=0
   for archopt_str in archopts_str:
     scriptname = "ro_bcast_test_" + str(num_nodes) + "_" + archopts[smp_index];
-    fileContents= getScriptBeg(num_nodes, 10, scriptname);
-    fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
+    outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "ro/";
 
     for basebuild in basebuilds[key]:
       scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "ro/";
+      extraSuffix= ""
+
+      outputName = outputDir + "zcro_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index];
+      outputName += "_result_%j.out";
+
+
+      fileContents= getScriptBeg(num_nodes, 10, scriptname, outputName);
+      fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
 
       two_power = 4;
       while (two_power <= 25):
         ro_size = 2**two_power;
         args         = str(ro_size);
         iteration = 1;
-        while (iteration <= 3):
-          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power);
-          fileContents += runComm + "\n\n\n\n"
+        while (iteration <= 1):
+          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power, "readonlyBcast");
+          #fileContents += runComm + "\n\n\n\n"
+          fileContents += runComm + "\n"
           iteration = iteration + 1;
         two_power = two_power + 1
+
+      two_power = 4;
+      while (two_power <= 25):
+        ro_size = 2**two_power;
+        args         = str(ro_size);
+        iteration = 1;
+        while (iteration <= 1):
+          runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration, two_power, "readonlyZCBcast");
+          #fileContents += runComm + "\n\n\n\n"
+          fileContents += runComm + "\n"
+          iteration = iteration + 1;
+        two_power = two_power + 1
+
+
 
     print "======================================================="
     print fileContents

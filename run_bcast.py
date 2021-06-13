@@ -1,7 +1,7 @@
 from charm_header import *
 
-num_nodes=1
-max_nodes=32
+num_nodes=2
+max_nodes=4
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -10,7 +10,8 @@ print "key is " + key
 print " basedir is " + basedirs[key]
 
 
-def getScriptBeg(num_nodes, mins, jobname):
+def getScriptBeg(num_nodes, mins, jobname, outputName):
+  scriptbeg = ""
   if(jobscheds[key] == "pbs"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#PBS -N " + jobname + "\n";
@@ -21,6 +22,14 @@ def getScriptBeg(num_nodes, mins, jobname):
     scriptbeg += "#SBATCH -q regular\n";
     scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+  elif(jobscheds[key] == "slurm" and key=="cori"):
+    scriptbeg = "#!/bin/bash -l\n";
+    scriptbeg += "#SBATCH -q regular\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --constraint=haswell" + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
   elif(jobscheds[key] == "slurm" and key=="bridges"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -p RM\n";
@@ -94,15 +103,15 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
 
 
 
-  if(key == "edison"):
-    runComm += charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+  if(key == "cori"):
+    runComm += charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
   elif(key == "bridges"):
     runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
   elif(key == "iforge"):
     runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
   elif(key == "hpcadv" or key == "golub"):
     if(basebuild == "verbs"):
-      runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+      runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs
     else:
       runComm += "mpirun" + space + "-n " + nval + space + execPath
       runComm += space + args
@@ -201,12 +210,19 @@ while num_nodes <= max_nodes:
   smp_index=0
   for archopt_str in archopts_str:
     scriptname = "reg_bcast_test_" + str(num_nodes) + "_" + archopts[smp_index];
-    fileContents = getScriptBeg(num_nodes, 30, scriptname);
-    fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
+    outputDir = charmutilsdirs[key] + slash + "results/" + key + slash + "bcast/";
+
 
     for basebuild in basebuilds[key]:
       scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
       extraSuffix= ""
+
+      outputName = outputDir + "zcpingall_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index];
+      outputName += "_result_%j.out";
+
+      fileContents = getScriptBeg(num_nodes, 10, scriptname, outputName);
+      fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
+
       #if(basebuild == "mpi"):
       #  extraSuffix="ompi"
       #  runComm = getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix);
@@ -236,6 +252,7 @@ while num_nodes <= max_nodes:
 
     #if(archopts[smp_index] == "nonsmp"):
     #  os.system("qsub -S "+scriptDir + scriptname)
+    #os.system("sbatch "+scriptDir + scriptname)
 
     smp_index = smp_index + 1;
   num_nodes = num_nodes*2

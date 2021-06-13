@@ -40,7 +40,7 @@ basedirs = {
 
 charmutilsdirs = {
     "iforge" : "/ui/cwi/nitin/software/charmutils",
-    "cori" : "/project/projectdirs/m2609/nitin/charmutils",
+    "cori" : "/global/project/projectdirs/m2609/nitin/charmutils",
     "bridges" : "/pylon5/ac7k4vp/nbhat4/charmutils",
     "hpcadv" : "/global/home/users/nitinb/charmutils",
     "golub" : "/home/nbhat4/scratch/charmutils",
@@ -73,7 +73,8 @@ basebuilds = {
     "hpcadv" : ["ucx","mpi","verbs"],
     "frontera" : ["ucx","mpi"],
     "iforge" : ["verbs","mpi"],
-    "cori" : ["mpi","gni"],
+    #"cori" : ["mpi","gni"],
+    "cori" : ["gni"],
     "bridges" : ["mpi","ofi"],
     "golub" : ["ucx","mpi","verbs"],
     "macbook" : ["netlrts","mpi"],
