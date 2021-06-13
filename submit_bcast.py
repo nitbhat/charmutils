@@ -1,6 +1,6 @@
 from charm_header import *
 num_nodes=2
-max_nodes=8
+max_nodes=32
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -19,7 +19,6 @@ while num_nodes <= max_nodes:
 
     for basebuild in basebuilds[key]:
       scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
-
       print "sbatch "+scriptDir + scriptname
       os.system("sbatch "+scriptDir + scriptname)
 

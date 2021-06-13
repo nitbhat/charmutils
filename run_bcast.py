@@ -41,6 +41,13 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
     scriptbeg += "#SBATCH --output="+ outputName + "\n";
     scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+  elif(jobscheds[key] == "slurm" and key=="stampede2"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+    scriptbeg += "#SBATCH -p normal" + "\n";
   elif(jobscheds[key] == "slurm" and key=="hpcadv"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -p thor\n";
@@ -108,10 +115,10 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
 
   if(key == "cori"):
     runComm += charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
-  elif(key == "bridges"):
-    runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+  elif(key == "bridges" or key == "stampede2"):
+    runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
   elif(key == "iforge"):
-    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs + " > " + outputFile
+    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs
   elif(key == "hpcadv" or key == "golub"):
     if(basebuild == "verbs"):
       runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs
@@ -179,6 +186,8 @@ def getPostArgs(num_nodes, proc_per_node, mode, smpType):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-12,14-26 +commap 13,27"
         elif(ppn == 32):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-14,16-30 +commap 15,31"
+        elif(ppn == 65):
+          return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-11,13-24,26-37,39-50,52-63 +commap 12,25,38,51,65"
     else:
       if mode == "smp":
         if num_nodes == 1:

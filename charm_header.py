@@ -22,6 +22,8 @@ elif(hostname_full.find('courage') != -1):
   key="courage"
 elif(hostname_full.find('MacBook') != -1):
   key="macbook"
+elif(hostname_full.find('stampede2') != -1):
+  key="stampede2"
 else:
   key = 'iforge'
 
@@ -35,7 +37,8 @@ basedirs = {
     "golub" : "/home/nbhat4/scratch/charm",
     "frontera" : "/scratch1/03808/nbhat4/charm",
     "courage" : "/scratch/nitin/charm_1",
-    "macbook" : "/Users/nitinbhat/Work/software/charm"
+    "macbook" : "/Users/nitinbhat/Work/software/charm",
+    "stampede2" : "/work2/03808/nbhat4/stampede2/charm"
 }
 
 charmutilsdirs = {
@@ -46,7 +49,8 @@ charmutilsdirs = {
     "golub" : "/home/nbhat4/scratch/charmutils",
     "frontera" : "/work/03808/nbhat4/frontera/charmutils",
     "courage" : "/scratch/nitin/charmutils",
-    "macbook" : "/Users/nitinbhat/Work/software/charmutils"
+    "macbook" : "/Users/nitinbhat/Work/software/charmutils",
+    "stampede2" : "/work2/03808/nbhat4/stampede2/charmutils"
 }
 
 appdirs = {
@@ -79,7 +83,8 @@ basebuilds = {
     #"golub" : ["ucx","mpi","verbs"],
     "golub" : ["ucx"],
     "macbook" : ["netlrts","mpi"],
-    "courage" : ["netlrts","mpi"]
+    "courage" : ["netlrts","mpi"],
+    "stampede2" : ["ofi"]
 }
 
 buildbasedirs = {
@@ -94,7 +99,8 @@ archmap = {
     "bridges" : "-linux-x86_64",
     "golub" : "-linux-x86_64",
     "macbook": "-darwin-x86_64",
-    "courage" : "-linux-x86_64"
+    "courage" : "-linux-x86_64",
+    "stampede2" : "-linux-x86_64"
 }
 
 ppnmap = {
@@ -104,7 +110,8 @@ ppnmap = {
     "cori" : 32,
     "edison" : 24,
     "bridges" : 28,
-    "golub" : 16
+    "golub" : 16,
+    "stampede2" : 65
 }
 
 proc_per_node_map = {
@@ -113,7 +120,8 @@ proc_per_node_map = {
     "iforge" : 2,
     "cori" : 2,
     "bridges" : 2,
-    "golub" : 2
+    "golub" : 2,
+    "stampede2" : 5
 }
 
 launcher_map = {
@@ -122,6 +130,7 @@ launcher_map = {
     "cori" : "srun",
     "bridges" : "mpirun",
     "golub" : "charmrun",
+    "stampede2" : "mpirun"
 }
 
 jobscheds = {
@@ -131,6 +140,7 @@ jobscheds = {
     "bridges" : "slurm",
     "golub" : "slurm",
     "frontera" : "slurm",
+    "stampede2" : "slurm",
 }
 
 preBuildEnv = {

@@ -31,6 +31,13 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
     scriptbeg += "#SBATCH --output="+ outputName + "\n";
     scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+  elif(jobscheds[key] == "slurm" and key=="stampede2"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+    scriptbeg += "#SBATCH -p normal" + "\n";
   elif(jobscheds[key] == "slurm" and key=="bridges"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -p RM\n";
@@ -40,7 +47,7 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
 
 def getScriptEnd(num_nodes,proc_per_node, mode):
   fileContents = "";
-  if(key=="edison" or key=="bridges"):
+  if(key=="edison" or key=="bridges" or key=="stampede2"):
     nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
     tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
     cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
@@ -88,7 +95,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration,
     #runComm1 += space + postpostargs
     runComm1 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
     #runComm2 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath2 + space + args + space + postargs + space + postpostargs
-  elif(key == "bridges" or key == "golub"):
+  elif(key == "bridges" or key == "golub" or key == "stampede2"):
     runComm1 = charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
     #runComm2 = charmRunDir + space + "-n " + nval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
   elif(key == "iforge"):
@@ -151,6 +158,8 @@ def getPostArgs(num_nodes, proc_per_node, mode, smpType):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-12,14-26 +commap 13,27"
         elif(ppn == 32):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-14,16-30 +commap 15,31"
+        elif(ppn == 65):
+          return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-11,13-24,26-37,39-50,52-63 +commap 12,25,38,51,65"
     else:
       if mode == "smp":
         if num_nodes == 1:
@@ -194,7 +203,7 @@ while num_nodes <= max_nodes:
       outputName += "_result_%j.out";
 
 
-      fileContents= getScriptBeg(num_nodes, 10, scriptname, outputName);
+      fileContents= getScriptBeg(num_nodes, 30, scriptname, outputName);
       fileContents += getScriptEnd(num_nodes, proc_per_node, archopts[smp_index]);
 
       two_power = 4;
