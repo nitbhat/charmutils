@@ -25,6 +25,12 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
     scriptbeg += "#SBATCH --output="+ outputName + "\n";
     scriptbeg += "#SBATCH --constraint=haswell" + "\n";
     scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+  elif(jobscheds[key] == "slurm" and key=="golub"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
   elif(jobscheds[key] == "slurm" and key=="bridges"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -p RM\n";
@@ -82,12 +88,12 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration,
     #runComm1 += space + postpostargs
     runComm1 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
     #runComm2 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath2 + space + args + space + postargs + space + postpostargs
-  elif(key == "bridges"):
-    runComm1 = charmRunDir + space + "-n " + nval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4 and iteration == 1) else " >> ") + outputFile
-    runComm2 = charmRunDir + space + "-n " + nval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
+  elif(key == "bridges" or key == "golub"):
+    runComm1 = charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
+    #runComm2 = charmRunDir + space + "-n " + nval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
   elif(key == "iforge"):
-    runComm1 = charmRunDir + space + "+p" + pval + space + execPath1 + space + args + space + postargs + space + postpostargs + (" > " if (two_power == 4 and iteration == 1) else " >> ") + outputFile
-    runComm2 = charmRunDir + space + "+p" + pval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
+    runComm1 = charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs
+    #runComm2 = charmRunDir + space + "+p" + pval + space + execPath2 + space + args + space + postargs + space + postpostargs + " >> " + outputFile
   #return runComm1 + "\n" + runComm2;
   return runComm1;
 

@@ -1,7 +1,7 @@
 from charm_header import *
 
-num_nodes=2
-max_nodes=4
+num_nodes=1
+max_nodes=32
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -35,6 +35,12 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
     scriptbeg += "#SBATCH -p RM\n";
     scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+  elif(jobscheds[key] == "slurm" and key=="golub"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
   elif(jobscheds[key] == "slurm" and key=="hpcadv"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -p thor\n";
@@ -46,9 +52,6 @@ def getScriptEnd(num_nodes,proc_per_node, mode):
   fileContents = "";
   if(key == "iforge"):
     fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
-  elif(key == "golub"):
-    # do nothing
-    pass
   else:
     nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
     tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
@@ -117,7 +120,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
       runComm += space + args
       print postargs
       runComm += space + postargs
-      runComm += space + postpostargs + " > " + outputFile
+      runComm += space + postpostargs
   return runComm
 
 
@@ -168,6 +171,8 @@ def getPostArgs(num_nodes, proc_per_node, mode, smpType):
       if num_nodes == 1:
         return " ++ppn " + str(ppn - 1) + space + " +pemap 0-"+str(ppn-2)+" +commap "+str(ppn-1)
       else:
+        if(ppn == 16):
+          return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-6,8-14 +commap 7,15"
         if(ppn == 24):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-10,12-22 +commap 11,23"
         elif(ppn == 28):
