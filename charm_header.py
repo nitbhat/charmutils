@@ -76,7 +76,8 @@ basebuilds = {
     #"cori" : ["mpi","gni"],
     "cori" : ["gni"],
     "bridges" : ["mpi","ofi"],
-    "golub" : ["ucx","mpi","verbs"],
+    #"golub" : ["ucx","mpi","verbs"],
+    "golub" : ["ucx"],
     "macbook" : ["netlrts","mpi"],
     "courage" : ["netlrts","mpi"]
 }
@@ -103,7 +104,7 @@ ppnmap = {
     "cori" : 32,
     "edison" : 24,
     "bridges" : 28,
-    "golub" : 24
+    "golub" : 16
 }
 
 proc_per_node_map = {
@@ -128,7 +129,7 @@ jobscheds = {
     "iforge" : "pbs",
     "cori" : "slurm",
     "bridges" : "slurm",
-    "golub" : "pbs",
+    "golub" : "slurm",
     "frontera" : "slurm",
 }
 

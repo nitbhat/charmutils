@@ -20,9 +20,8 @@ while num_nodes <= max_nodes:
     for basebuild in basebuilds[key]:
       scriptDir = charmutilsdirs[key] + slash + "scripts/" + key + slash + "bcast/";
 
-      if(smp_index == 1):
-        print "sbatch "+scriptDir + scriptname
-        os.system("sbatch "+scriptDir + scriptname)
+      print "sbatch "+scriptDir + scriptname
+      os.system("sbatch "+scriptDir + scriptname)
 
     smp_index = smp_index + 1;
   num_nodes = num_nodes*2
