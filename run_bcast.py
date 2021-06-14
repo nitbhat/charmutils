@@ -1,7 +1,7 @@
 from charm_header import *
 
 num_nodes=1
-max_nodes=32
+max_nodes=128
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -41,6 +41,13 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
     scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
     scriptbeg += "#SBATCH --output="+ outputName + "\n";
     scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+  elif(jobscheds[key] == "slurm" and key=="iforge"):
+    scriptbeg = "#!/bin/bash\n";
+    scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
+    scriptbeg += "#SBATCH -N "+ str(num_nodes) + "\n";
+    scriptbeg += "#SBATCH --output="+ outputName + "\n";
+    scriptbeg += "#SBATCH --job-name=" + jobname + "\n";
+    scriptbeg += "#SBATCH -p " + "skylake" + "\n";
   elif(jobscheds[key] == "slurm" and key=="stampede2"):
     scriptbeg = "#!/bin/bash\n";
     scriptbeg += "#SBATCH -t 00:" + str(mins) + ":00\n";
@@ -57,14 +64,14 @@ def getScriptBeg(num_nodes, mins, jobname, outputName):
 
 def getScriptEnd(num_nodes,proc_per_node, mode):
   fileContents = "";
-  if(key == "iforge"):
-    fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
-  else:
-    nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
-    tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
-    cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
-    fileContents += "#SBATCH -n "+nval+"\n";
-    fileContents += "#SBATCH --ntasks-per-node="+tasks_per_node+"\n";
+  #if(key == "iforge"):
+  #  fileContents += "~/gennodelist2.pl $PBS_NODEFILE $PBS_JOBID "+ str(num_nodes * ppn) + " _" + scriptname + "\n";
+  #else:
+  nval         = str(getNValue(num_nodes, proc_per_node, archopts[smp_index]))
+  tasks_per_node =  str(getTasksPerNodeValue(num_nodes, proc_per_node, archopts[smp_index]))
+  cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
+  fileContents += "#SBATCH -n "+nval+"\n";
+  fileContents += "#SBATCH --ntasks-per-node="+tasks_per_node+"\n";
   return fileContents;
 
 def getSmpType(basebuild):
@@ -99,10 +106,10 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
   cval         = str(getCValue(num_nodes, proc_per_node, archopts[smp_index]))
   args         = " 16 33554432 50 10 0 "
   postargs     = getPostArgs(num_nodes, proc_per_node, archopts[smp_index], getSmpType(basebuild))
-  if(key == "iforge"):
-    postpostargs = getPostPostArgs(basebuild, archopts[smp_index], ".$PBS_JOBID")
-  else:
-    postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
+  #if(key == "iforge"):
+  #  postpostargs = getPostPostArgs(basebuild, archopts[smp_index], ".$PBS_JOBID")
+  #else:
+  postpostargs = getPostPostArgs(basebuild, archopts[smp_index], "_" + scriptname)
   outputFile   = outputDir + "reg_bcast_test_" + str(num_nodes) + "_" + basebuild + "_" + archopts[smp_index]
 
   if(path.exists(outputFile)):
@@ -115,11 +122,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, extraSuffix):
 
   if(key == "cori"):
     runComm += charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
-  elif(key == "bridges" or key == "stampede2"):
-    runComm += charmRunDir + space + "-n " + nval + space + execPath + space + args + space + postargs + space + postpostargs
-  elif(key == "iforge"):
-    runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs
-  elif(key == "hpcadv" or key == "golub"):
+  else:
     if(basebuild == "verbs"):
       runComm += charmRunDir + space + "+p" + pval + space + execPath + space + args + space + postargs + space + postpostargs
     else:
@@ -186,6 +189,9 @@ def getPostArgs(num_nodes, proc_per_node, mode, smpType):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-12,14-26 +commap 13,27"
         elif(ppn == 32):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-14,16-30 +commap 15,31"
+        elif(ppn == 40):
+          return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-8,10-18,20-28,30-38 +commap 9,19,29,39"
+          #return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-11,13-24,26-37 +commap 12,25,38"
         elif(ppn == 65):
           return " ++ppn " + str(ppn/proc_per_node - 1) + space + " +pemap 0-11,13-24,26-37,39-50,52-63 +commap 12,25,38,51,65"
     else:

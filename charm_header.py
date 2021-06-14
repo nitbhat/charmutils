@@ -70,13 +70,11 @@ exam2mdirs = {
 }
 
 
-
-
-
 basebuilds = {
     "hpcadv" : ["ucx","mpi","verbs"],
     "frontera" : ["ucx","mpi"],
-    "iforge" : ["verbs","mpi"],
+    #"iforge" : ["verbs","mpi"],
+    "iforge" : ["ucx"],
     #"cori" : ["mpi","gni"],
     "cori" : ["gni"],
     "bridges" : ["mpi","ofi"],
@@ -106,7 +104,7 @@ archmap = {
 ppnmap = {
     "hpcadv" : 32,
     "frontera" : 56,
-    "iforge" : 24,
+    "iforge" : 40,
     "cori" : 32,
     "edison" : 24,
     "bridges" : 28,
@@ -117,7 +115,7 @@ ppnmap = {
 proc_per_node_map = {
     "hpcadv" : 2,
     "frontera" : 2,
-    "iforge" : 2,
+    "iforge" : 4,
     "cori" : 2,
     "bridges" : 2,
     "golub" : 2,
@@ -126,7 +124,7 @@ proc_per_node_map = {
 
 launcher_map = {
     "hpcadv" : "charmrun",
-    "iforge" : "charmrun",
+    "iforge" : "mpirun",
     "cori" : "srun",
     "bridges" : "mpirun",
     "golub" : "charmrun",
@@ -135,7 +133,7 @@ launcher_map = {
 
 jobscheds = {
     "hpcadv" : "slurm",
-    "iforge" : "pbs",
+    "iforge" : "slurm",
     "cori" : "slurm",
     "bridges" : "slurm",
     "golub" : "slurm",

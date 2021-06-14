@@ -1,6 +1,6 @@
 from charm_header import *
-num_nodes=2
-max_nodes=32
+num_nodes=64
+max_nodes=128
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
