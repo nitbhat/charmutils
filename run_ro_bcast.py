@@ -1,7 +1,7 @@
 from charm_header import *
 
 num_nodes=1
-max_nodes=32
+max_nodes=128
 ppn = ppnmap[key]
 proc_per_node=proc_per_node_map[key]
 
@@ -100,7 +100,7 @@ def getRunCommand(num_nodes, archopt_str, smp_index, basebuild, args, iteration,
     #runComm1 += space + execPath1 + space
     #runComm1 += args + space + postargs
     #runComm1 += space + postpostargs
-    runComm1 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
+    runComm = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath + space + args + space + postargs + space + postpostargs
     #runComm2 = charmRunDir + space + "-n " + nval + space + " -c " + cval + space + execPath2 + space + args + space + postargs + space + postpostargs
   else:
     runComm = ""
